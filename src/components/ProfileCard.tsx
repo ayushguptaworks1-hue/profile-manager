@@ -150,7 +150,7 @@ Profile Link: ${profileLink}
       {/* Contact Modal */}
       {showContactModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-900">Contact {profile.name}</h3>
               <button
@@ -163,7 +163,7 @@ Profile Link: ${profileLink}
               </button>
             </div>
 
-            <form onSubmit={handleContactSubmit} className="space-y-4">
+            <form onSubmit={handleContactSubmit} className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
                 <input
@@ -171,7 +171,7 @@ Profile Link: ${profileLink}
                   required
                   value={formData.visitorName}
                   onChange={(e) => setFormData({ ...formData, visitorName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
                   placeholder="John Doe"
                 />
               </div>
@@ -183,7 +183,7 @@ Profile Link: ${profileLink}
                   required
                   value={formData.visitorEmail}
                   onChange={(e) => setFormData({ ...formData, visitorEmail: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
                   placeholder="john@example.com"
                 />
               </div>
@@ -195,7 +195,7 @@ Profile Link: ${profileLink}
                   required
                   value={formData.visitorPhone}
                   onChange={(e) => setFormData({ ...formData, visitorPhone: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
                   placeholder="+1 (234) 567-8900"
                 />
               </div>
@@ -206,23 +206,23 @@ Profile Link: ${profileLink}
                   required
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
                   placeholder="I would like to discuss..."
                 />
               </div>
 
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowContactModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
                 >
                   Send Message
                 </button>
