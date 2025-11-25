@@ -51,7 +51,7 @@ export default function FilterPanel({ roles, skills, onFilterChange }: FilterPan
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8 sticky top-8 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
+    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Filters</h2>
         <button
