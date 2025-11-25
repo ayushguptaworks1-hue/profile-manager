@@ -175,6 +175,11 @@ export default function AdminPage() {
       cvUrl: profile.cvUrl || ''
     });
     setShowForm(true);
+    
+    // Scroll to form
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const handleCancelEdit = () => {
