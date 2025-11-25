@@ -9,6 +9,7 @@ export default function AdminPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
   const [formData, setFormData] = useState<Omit<Profile, 'id'>>({
     name: '',
     role: '',
@@ -88,10 +89,11 @@ export default function AdminPage() {
     e.preventDefault();
     
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert([
-          {
+      if (editingProfile) {
+        // Update existing profile
+        const { error } = await supabase
+          .from('profiles')
+          .update({
             name: formData.name,
             role: formData.role,
             experience: formData.experience,
@@ -103,13 +105,34 @@ export default function AdminPage() {
             email: formData.email || null,
             location: formData.location || null,
             cv_url: formData.cvUrl || null
-          }
-        ])
-        .select();
+          })
+          .eq('id', editingProfile.id);
 
-      if (error) throw error;
+        if (error) throw error;
+        alert('Profile updated successfully!');
+      } else {
+        // Insert new profile
+        const { error } = await supabase
+          .from('profiles')
+          .insert([
+            {
+              name: formData.name,
+              role: formData.role,
+              experience: formData.experience,
+              skills: formData.skills,
+              availability: formData.availability,
+              media_type: formData.mediaType,
+              media_url: formData.mediaUrl,
+              bio: formData.bio || null,
+              email: formData.email || null,
+              location: formData.location || null,
+              cv_url: formData.cvUrl || null
+            }
+          ]);
 
-      alert('Profile added successfully!');
+        if (error) throw error;
+        alert('Profile added successfully!');
+      }
       
       // Reset form
       setFormData({
@@ -125,14 +148,51 @@ export default function AdminPage() {
         location: '',
         cvUrl: ''
       });
+      setEditingProfile(null);
       setShowForm(false);
       
       // Refresh profiles list
       fetchProfiles();
     } catch (error) {
-      console.error('Error adding profile:', error);
-      alert('Error adding profile. Please try again.');
+      console.error('Error saving profile:', error);
+      alert('Error saving profile. Please try again.');
     }
+  };
+
+  const handleEditProfile = (profile: Profile) => {
+    setEditingProfile(profile);
+    setFormData({
+      name: profile.name,
+      role: profile.role,
+      experience: profile.experience,
+      skills: profile.skills,
+      availability: profile.availability,
+      mediaType: profile.mediaType,
+      mediaUrl: profile.mediaUrl,
+      bio: profile.bio || '',
+      email: profile.email || '',
+      location: profile.location || '',
+      cvUrl: profile.cvUrl || ''
+    });
+    setShowForm(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProfile(null);
+    setFormData({
+      name: '',
+      role: '',
+      experience: '',
+      skills: [],
+      availability: 'In Office',
+      mediaType: 'image',
+      mediaUrl: '',
+      bio: '',
+      email: '',
+      location: '',
+      cvUrl: ''
+    });
+    setShowForm(false);
   };
 
   const handleDeleteProfile = async (id: string) => {
@@ -190,17 +250,25 @@ export default function AdminPage() {
         {/* Add Profile Button */}
         <div className="mb-8">
           <button
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => {
+              if (showForm) {
+                handleCancelEdit();
+              } else {
+                setShowForm(true);
+              }
+            }}
             className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
           >
             {showForm ? 'Cancel' : '+ Add New Profile'}
           </button>
         </div>
 
-        {/* Add Profile Form */}
+        {/* Add/Edit Profile Form */}
         {showForm && (
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Add New Profile</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {editingProfile ? 'Edit Profile' : 'Add New Profile'}
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
@@ -400,11 +468,11 @@ export default function AdminPage() {
                   disabled={formData.skills.length === 0}
                   className="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                 >
-                  Add Profile
+                  {editingProfile ? 'Update Profile' : 'Add Profile'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowForm(false)}
+                  onClick={handleCancelEdit}
                   className="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-300 transition-colors duration-200 font-medium"
                 >
                   Cancel
@@ -465,12 +533,20 @@ export default function AdminPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <button
-                        onClick={() => handleDeleteProfile(profile.id)}
-                        className="text-red-600 hover:text-red-800 font-medium"
-                      >
-                        Delete
-                      </button>
+                      <div className="flex gap-3 justify-end">
+                        <button
+                          onClick={() => handleEditProfile(profile)}
+                          className="text-indigo-600 hover:text-indigo-800 font-medium"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProfile(profile.id)}
+                          className="text-red-600 hover:text-red-800 font-medium"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
