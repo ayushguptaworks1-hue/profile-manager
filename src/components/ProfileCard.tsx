@@ -1,16 +1,54 @@
 'use client';
 
 import { Profile } from '@/types/profile';
+import { useState } from 'react';
 
 interface ProfileCardProps {
   profile: Profile;
 }
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [formData, setFormData] = useState({
+    visitorName: '',
+    visitorEmail: '',
+    visitorPhone: '',
+    message: ''
+  });
+
   const availabilityColors = {
     'Available': 'bg-green-100 text-green-800 border-green-300',
     'Busy': 'bg-yellow-100 text-yellow-800 border-yellow-300',
     'On Leave': 'bg-red-100 text-red-800 border-red-300'
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Create email content with visitor info and profile link
+    const profileLink = window.location.href;
+    const emailBody = `
+New Contact Request for ${profile.name}
+
+Visitor Information:
+Name: ${formData.visitorName}
+Email: ${formData.visitorEmail}
+Phone: ${formData.visitorPhone}
+
+Message:
+${formData.message}
+
+Profile Link: ${profileLink}
+    `.trim();
+
+    // Send to profile owner's email
+    const mailtoLink = `mailto:${profile.email}?subject=Contact Request from ${formData.visitorName}&body=${encodeURIComponent(emailBody)}`;
+    window.location.href = mailtoLink;
+    
+    // Close modal and reset form
+    setShowContactModal(false);
+    setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
+    alert('Your contact request is being sent!');
   };
 
   return (
@@ -87,7 +125,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         <div className="flex gap-2 mt-4">
           {profile.email && (
             <button
-              onClick={() => window.location.href = `mailto:${profile.email}`}
+              onClick={() => setShowContactModal(true)}
               className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium"
             >
               Contact
@@ -108,6 +146,91 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           )}
         </div>
       </div>
+
+      {/* Contact Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Contact {profile.name}</h3>
+              <button
+                onClick={() => setShowContactModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleContactSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.visitorName}
+                  onChange={(e) => setFormData({ ...formData, visitorName: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Email *</label>
+                <input
+                  type="email"
+                  required
+                  value={formData.visitorEmail}
+                  onChange={(e) => setFormData({ ...formData, visitorEmail: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="john@example.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Phone *</label>
+                <input
+                  type="tel"
+                  required
+                  value={formData.visitorPhone}
+                  onChange={(e) => setFormData({ ...formData, visitorPhone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="+1 (234) 567-8900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Message *</label>
+                <textarea
+                  required
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="I would like to discuss..."
+                />
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowContactModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
+                >
+                  Send Message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
