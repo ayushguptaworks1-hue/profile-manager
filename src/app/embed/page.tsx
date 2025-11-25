@@ -24,6 +24,26 @@ export default function EmbedPage() {
     fetchProfiles();
   }, []);
 
+  // Send height to parent window for iframe resize
+  useEffect(() => {
+    const sendHeight = () => {
+      if (window.parent) {
+        window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+      }
+    };
+
+    sendHeight();
+    
+    // Send height on resize and after content loads
+    window.addEventListener('resize', sendHeight);
+    const interval = setInterval(sendHeight, 500);
+
+    return () => {
+      window.removeEventListener('resize', sendHeight);
+      clearInterval(interval);
+    };
+  }, [profiles, currentPage]);
+
   const fetchProfiles = async () => {
     try {
       const { data, error } = await supabase
