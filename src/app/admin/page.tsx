@@ -14,7 +14,7 @@ export default function AdminPage() {
     role: '',
     experience: '',
     skills: [],
-    availability: 'Available',
+    availability: 'In Office',
     mediaType: 'image',
     mediaUrl: '',
     bio: '',
@@ -117,7 +117,7 @@ export default function AdminPage() {
         role: '',
         experience: '',
         skills: [],
-        availability: 'Available',
+        availability: 'In Office',
         mediaType: 'image',
         mediaUrl: '',
         bio: '',
@@ -249,10 +249,10 @@ export default function AdminPage() {
                   />
                 </div>
 
-                {/* Availability */}
+                {/* Work Location */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Availability <span className="text-red-500">*</span>
+                    Work Location <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="availability"
@@ -261,9 +261,8 @@ export default function AdminPage() {
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
-                    <option value="Available">Available</option>
-                    <option value="Busy">Busy</option>
-                    <option value="On Leave">On Leave</option>
+                    <option value="In Office">In Office</option>
+                    <option value="Remote">Remote</option>
                   </select>
                 </div>
 
@@ -427,7 +426,7 @@ export default function AdminPage() {
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Role</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Experience</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Availability</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Work Location</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Skills</th>
                   <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -442,6 +441,8 @@ export default function AdminPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{profile.experience}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        profile.availability === 'In Office' ? 'bg-blue-100 text-blue-800' :
+                        profile.availability === 'Remote' ? 'bg-green-100 text-green-800' :
                         profile.availability === 'Available' ? 'bg-green-100 text-green-800' :
                         profile.availability === 'Busy' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-red-100 text-red-800'

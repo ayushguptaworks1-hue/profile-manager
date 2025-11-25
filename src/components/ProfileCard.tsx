@@ -17,6 +17,8 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   });
 
   const availabilityColors = {
+    'In Office': 'bg-blue-100 text-blue-800 border-blue-300',
+    'Remote': 'bg-green-100 text-green-800 border-green-300',
     'Available': 'bg-green-100 text-green-800 border-green-300',
     'Busy': 'bg-yellow-100 text-yellow-800 border-yellow-300',
     'On Leave': 'bg-red-100 text-red-800 border-red-300'

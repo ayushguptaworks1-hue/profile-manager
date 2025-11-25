@@ -4,7 +4,7 @@ export interface Profile {
   role: string;
   experience: string; // e.g., "5 years"
   skills: string[];
-  availability: 'Available' | 'Busy' | 'On Leave';
+  availability: 'In Office' | 'Remote' | 'Available' | 'Busy' | 'On Leave';
   mediaType: 'video' | 'image';
   mediaUrl: string;
   bio?: string;
