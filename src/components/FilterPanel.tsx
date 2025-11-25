@@ -89,21 +89,6 @@ export default function FilterPanel({ roles, skills, onFilterChange }: FilterPan
         </select>
       </div>
 
-      {/* Availability Filter */}
-      <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">Availability</label>
-        <select
-          value={availability}
-          onChange={(e) => handleAvailabilityChange(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        >
-          <option value="">All Statuses</option>
-          <option value="Available">Available</option>
-          <option value="Busy">Busy</option>
-          <option value="On Leave">On Leave</option>
-        </select>
-      </div>
-
       {/* Skills Filter */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-3">Skills</label>
