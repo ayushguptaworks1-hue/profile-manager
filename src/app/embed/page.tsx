@@ -174,7 +174,7 @@ export default function EmbedPage() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="mt-8 flex justify-center items-center gap-2">
+                  <div className="mt-12 mb-16 py-6 flex justify-center items-center gap-2 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg shadow-md">
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
