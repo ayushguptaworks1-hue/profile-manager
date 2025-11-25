@@ -173,11 +173,11 @@ export default function Home() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="mt-8 flex justify-center items-center gap-2">
+                  <div className="mt-8 mb-20 flex justify-center items-center gap-2">
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium bg-white"
                     >
                       Previous
                     </button>
@@ -190,7 +190,7 @@ export default function Home() {
                           className={`px-4 py-2 rounded-lg font-medium ${
                             currentPage === page
                               ? 'bg-indigo-600 text-white'
-                              : 'border border-gray-300 hover:bg-gray-50'
+                              : 'border border-gray-300 hover:bg-gray-50 bg-white'
                           }`}
                         >
                           {page}
@@ -201,10 +201,49 @@ export default function Home() {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium bg-white"
                     >
                       Next
                     </button>
+                  </div>
+                )}
+
+                {/* Fixed Pagination Bar at Bottom */}
+                {totalPages > 1 && (
+                  <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg py-4 z-50">
+                    <div className="max-w-7xl mx-auto px-4 flex justify-center items-center gap-2">
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium bg-white"
+                      >
+                        Previous
+                      </button>
+                      
+                      <div className="flex gap-2">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`px-4 py-2 rounded-lg font-medium ${
+                              currentPage === page
+                                ? 'bg-indigo-600 text-white'
+                                : 'border border-gray-300 hover:bg-gray-50 bg-white'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium bg-white"
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
                 )}
               </>
