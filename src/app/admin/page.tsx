@@ -45,7 +45,7 @@ export default function AdminPage() {
     
     // Simple authentication - replace with your credentials
     const ADMIN_EMAIL = 'admin@gscoutsourcing.com';
-    const ADMIN_PASSWORD = 'Admin@2025';
+    const ADMIN_PASSWORD = 'GSC@Admin#2025$Secure!';
     
     if (loginEmail === ADMIN_EMAIL && loginPassword === ADMIN_PASSWORD) {
       sessionStorage.setItem('adminAuth', 'authenticated');
