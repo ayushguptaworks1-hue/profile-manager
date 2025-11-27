@@ -6,6 +6,10 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -25,11 +29,42 @@ export default function AdminPage() {
   });
   const [skillInput, setSkillInput] = useState('');
 
-  // Fetch profiles on mount
+  // Check authentication on mount
   useEffect(() => {
-    fetchProfiles();
+    const auth = sessionStorage.getItem('adminAuth');
+    if (auth === 'authenticated') {
+      setIsAuthenticated(true);
+      fetchProfiles();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
+  const handleLogin = (e: FormEvent) => {
+    e.preventDefault();
+    
+    // Simple authentication - replace with your credentials
+    const ADMIN_EMAIL = 'admin@gscoutsourcing.com';
+    const ADMIN_PASSWORD = 'Admin@2025';
+    
+    if (loginEmail === ADMIN_EMAIL && loginPassword === ADMIN_PASSWORD) {
+      sessionStorage.setItem('adminAuth', 'authenticated');
+      setIsAuthenticated(true);
+      setLoginError('');
+      fetchProfiles();
+    } else {
+      setLoginError('Invalid email or password');
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('adminAuth');
+    setIsAuthenticated(false);
+    setLoginEmail('');
+    setLoginPassword('');
+  };
+
+  // Fetch profiles on mount
   const fetchProfiles = async () => {
     try {
       const { data, error } = await supabase
@@ -230,6 +265,69 @@ export default function AdminPage() {
     );
   }
 
+  // Login page
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
+            <p className="text-gray-600">Enter your credentials to access the admin panel</p>
+          </div>
+          
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="admin@example.com"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {loginError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {loginError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-semibold shadow-lg hover:shadow-xl"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link href="/" className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+              ← Back to Profiles
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
@@ -240,12 +338,20 @@ export default function AdminPage() {
               <h1 className="text-4xl font-bold text-gray-900">Admin Panel</h1>
               <p className="text-gray-600 mt-1">Manage team member profiles</p>
             </div>
-            <Link
-              href="/"
-              className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
-            >
-              View Profiles
-            </Link>
+            <div className="flex gap-3">
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              >
+                Logout
+              </button>
+              <Link
+                href="/"
+                className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              >
+                View Profiles
+              </Link>
+            </div>
           </div>
         </div>
       </header>
