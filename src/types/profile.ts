@@ -7,6 +7,7 @@ export interface Profile {
   availability: 'In Office' | 'Remote' | 'Available' | 'Busy' | 'On Leave';
   mediaType: 'video' | 'image';
   mediaUrl: string;
+  thumbnailUrl?: string; // Optional thumbnail for videos
   bio?: string;
   email?: string;
   location?: string;

@@ -44,6 +44,7 @@ export default function Home() {
         availability: item.availability as 'Available' | 'Busy' | 'On Leave',
         mediaType: item.media_type as 'video' | 'image',
         mediaUrl: item.media_url,
+        thumbnailUrl: item.thumbnail_url,
         bio: item.bio,
         email: item.email,
         location: item.location,

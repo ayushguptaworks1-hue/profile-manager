@@ -22,6 +22,7 @@ export default function AdminPage() {
     availability: 'In Office',
     mediaType: 'image',
     mediaUrl: '',
+    thumbnailUrl: '',
     bio: '',
     email: '',
     location: '',
@@ -83,6 +84,7 @@ export default function AdminPage() {
         availability: item.availability as 'Available' | 'Busy' | 'On Leave',
         mediaType: item.media_type as 'video' | 'image',
         mediaUrl: item.media_url,
+        thumbnailUrl: item.thumbnail_url,
         bio: item.bio,
         email: item.email,
         location: item.location,
@@ -136,6 +138,7 @@ export default function AdminPage() {
             availability: formData.availability,
             media_type: formData.mediaType,
             media_url: formData.mediaUrl,
+            thumbnail_url: formData.thumbnailUrl || null,
             bio: formData.bio || null,
             email: formData.email || null,
             location: formData.location || null,
@@ -158,6 +161,7 @@ export default function AdminPage() {
               availability: formData.availability,
               media_type: formData.mediaType,
               media_url: formData.mediaUrl,
+              thumbnail_url: formData.thumbnailUrl || null,
               bio: formData.bio || null,
               email: formData.email || null,
               location: formData.location || null,
@@ -178,6 +182,7 @@ export default function AdminPage() {
         availability: 'In Office',
         mediaType: 'image',
         mediaUrl: '',
+        thumbnailUrl: '',
         bio: '',
         email: '',
         location: '',
@@ -514,6 +519,26 @@ export default function AdminPage() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                 </div>
+
+                {/* Thumbnail URL - only for videos */}
+                {formData.mediaType === 'video' && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Video Thumbnail URL (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      name="thumbnailUrl"
+                      value={formData.thumbnailUrl}
+                      onChange={handleInputChange}
+                      placeholder="https://example.com/thumbnail.jpg"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Add a custom thumbnail image for your video. Shows before the video plays.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Bio */}
