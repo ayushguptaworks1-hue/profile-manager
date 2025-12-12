@@ -13,10 +13,10 @@ function getEmbedUrl(url: string, autoplay: boolean = false): { type: 'video' | 
   const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (driveMatch) {
     const fileId = driveMatch[1];
-    // Use uc?export=download for direct video streaming instead of preview
+    // Use iframe with preview for better compatibility
     return {
-      type: 'video',
-      url: `https://drive.google.com/uc?export=download&id=${fileId}`
+      type: 'iframe',
+      url: `https://drive.google.com/file/d/${fileId}/preview`
     };
   }
   
