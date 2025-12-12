@@ -47,6 +47,7 @@ function getDirectImageUrl(url: string): string {
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(false);
   const [formData, setFormData] = useState({
     visitorName: '',
     visitorEmail: '',
@@ -102,7 +103,13 @@ Profile Link: ${profileLink}
             // Show thumbnail with play button overlay if thumbnail exists and not clicked yet
             if (!showVideo && profile.thumbnailUrl) {
               return (
-                <div className="relative w-full h-full cursor-pointer" onClick={() => setShowVideo(true)}>
+                <div 
+                  className="relative w-full h-full cursor-pointer" 
+                  onClick={() => {
+                    setShowVideo(true);
+                    setVideoLoading(true);
+                  }}
+                >
                   <img
                     src={getDirectImageUrl(profile.thumbnailUrl)}
                     alt={`${profile.name} video thumbnail`}
@@ -122,12 +129,23 @@ Profile Link: ${profileLink}
             
             // Show video player
             return embedData.type === 'iframe' ? (
-              <iframe
-                src={embedData.url}
-                className="w-full h-full"
-                allow="autoplay"
-                allowFullScreen
-              />
+              <div className="relative w-full h-full">
+                {videoLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
+                    <div className="text-white text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-2"></div>
+                      <p className="text-sm">Loading video...</p>
+                    </div>
+                  </div>
+                )}
+                <iframe
+                  src={embedData.url}
+                  className="w-full h-full"
+                  allow="autoplay"
+                  allowFullScreen
+                  onLoad={() => setVideoLoading(false)}
+                />
+              </div>
             ) : (
               <video
                 src={embedData.url}

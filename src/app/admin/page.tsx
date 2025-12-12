@@ -519,6 +519,16 @@ export default function AdminPage() {
                     placeholder="https://example.com/media.jpg"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
+                  {formData.mediaType === 'video' && formData.mediaUrl.includes('drive.google.com') && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-xs text-blue-800 font-semibold mb-1">📌 Important: Google Drive Video Setup</p>
+                      <ol className="text-xs text-blue-700 space-y-1 ml-4 list-decimal">
+                        <li>Right-click your video in Google Drive → Share</li>
+                        <li>Change to "Anyone with the link" can view</li>
+                        <li>Copy the sharing link and paste it above</li>
+                      </ol>
+                    </div>
+                  )}
                 </div>
 
                 {/* Thumbnail URL - only for videos */}
@@ -536,7 +546,7 @@ export default function AdminPage() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      Add a custom thumbnail image for your video. Shows before the video plays.
+                      Add a custom thumbnail image for your video. Shows before the video plays. Use Google Drive or any image hosting service.
                     </p>
                   </div>
                 )}
