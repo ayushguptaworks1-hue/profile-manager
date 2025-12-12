@@ -8,14 +8,15 @@ interface ProfileCardProps {
 }
 
 // Helper function to convert Google Drive link to embeddable format
-function getEmbedUrl(url: string): { type: 'video' | 'iframe', url: string } {
+function getEmbedUrl(url: string, autoplay: boolean = false): { type: 'video' | 'iframe', url: string } {
   // Check if it's a Google Drive link
   const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (driveMatch) {
     const fileId = driveMatch[1];
+    const autoplayParam = autoplay ? '?autoplay=1' : '';
     return {
       type: 'iframe',
-      url: `https://drive.google.com/file/d/${fileId}/preview`
+      url: `https://drive.google.com/file/d/${fileId}/preview${autoplayParam}`
     };
   }
   
@@ -115,7 +116,7 @@ Profile Link: ${profileLink}
           ) : (
             // Show video player
             (() => {
-              const embedData = getEmbedUrl(profile.mediaUrl);
+              const embedData = getEmbedUrl(profile.mediaUrl, true);
               return embedData.type === 'iframe' ? (
                 <iframe
                   src={embedData.url}
