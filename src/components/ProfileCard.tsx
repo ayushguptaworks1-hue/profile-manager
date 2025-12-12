@@ -7,6 +7,27 @@ interface ProfileCardProps {
   profile: Profile;
 }
 
+// Helper function to convert Google Drive link to embeddable format
+function getEmbedUrl(url: string): { type: 'video' | 'iframe', url: string } {
+  // Check if it's a Google Drive link
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (driveMatch) {
+    const fileId = driveMatch[1];
+    return {
+      type: 'iframe',
+      url: `https://drive.google.com/file/d/${fileId}/preview`
+    };
+  }
+  
+  // Check if it's already a Google Drive preview link
+  if (url.includes('drive.google.com') && url.includes('/preview')) {
+    return { type: 'iframe', url };
+  }
+  
+  // For regular video URLs (direct links)
+  return { type: 'video', url };
+}
+
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -58,14 +79,26 @@ Profile Link: ${profileLink}
       {/* Media Section */}
       <div className="relative w-full h-64 bg-gray-200">
         {profile.mediaType === 'video' ? (
-          <video
-            src={profile.mediaUrl}
-            controls
-            className="w-full h-full object-cover"
-            preload="metadata"
-          >
-            Your browser does not support the video tag.
-          </video>
+          (() => {
+            const embedData = getEmbedUrl(profile.mediaUrl);
+            return embedData.type === 'iframe' ? (
+              <iframe
+                src={embedData.url}
+                className="w-full h-full"
+                allow="autoplay"
+                allowFullScreen
+              />
+            ) : (
+              <video
+                src={embedData.url}
+                controls
+                className="w-full h-full object-cover"
+                preload="metadata"
+              >
+                Your browser does not support the video tag.
+              </video>
+            );
+          })()
         ) : (
           <img
             src={profile.mediaUrl}
