@@ -524,7 +524,7 @@ export default function AdminPage() {
                       <p className="text-xs text-blue-800 font-semibold mb-1">📌 Important: Google Drive Video Setup</p>
                       <ol className="text-xs text-blue-700 space-y-1 ml-4 list-decimal">
                         <li>Right-click your video in Google Drive → Share</li>
-                        <li>Change to "Anyone with the link" can view</li>
+                        <li>Change to &quot;Anyone with the link&quot; can view</li>
                         <li>Copy the sharing link and paste it above</li>
                       </ol>
                     </div>
