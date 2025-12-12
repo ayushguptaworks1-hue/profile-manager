@@ -118,9 +118,9 @@ Profile Link: ${profileLink}
               const embedData = getEmbedUrl(profile.mediaUrl);
               return embedData.type === 'iframe' ? (
                 <iframe
-                  src={`${embedData.url}?autoplay=1`}
+                  src={embedData.url}
                   className="w-full h-full"
-                  allow="autoplay"
+                  allow="autoplay; encrypted-media"
                   allowFullScreen
                 />
               ) : (
