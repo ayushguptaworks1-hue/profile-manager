@@ -8,12 +8,11 @@ interface ProfileCardProps {
 }
 
 // Helper function to convert Google Drive link to embeddable format
-function getEmbedUrl(url: string, autoplay: boolean = false): { type: 'video' | 'iframe', url: string } {
+function getEmbedUrl(url: string): { type: 'video' | 'iframe', url: string } {
   // Check if it's a Google Drive link
   const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (driveMatch) {
     const fileId = driveMatch[1];
-    // Use iframe with preview for better compatibility
     return {
       type: 'iframe',
       url: `https://drive.google.com/file/d/${fileId}/preview`
@@ -47,7 +46,6 @@ function getDirectImageUrl(url: string): string {
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
-  const [videoLoading, setVideoLoading] = useState(false);
   const [formData, setFormData] = useState({
     visitorName: '',
     visitorEmail: '',
@@ -97,68 +95,48 @@ Profile Link: ${profileLink}
       {/* Media Section */}
       <div className="relative w-full h-64 bg-gray-200">
         {profile.mediaType === 'video' ? (
-          (() => {
-            const embedData = getEmbedUrl(profile.mediaUrl, showVideo);
-            
-            // Show thumbnail with play button overlay if thumbnail exists and not clicked yet
-            if (!showVideo && profile.thumbnailUrl) {
-              return (
-                <div 
-                  className="relative w-full h-full cursor-pointer" 
-                  onClick={() => {
-                    setShowVideo(true);
-                    setVideoLoading(true);
-                  }}
-                >
-                  <img
-                    src={getDirectImageUrl(profile.thumbnailUrl)}
-                    alt={`${profile.name} video thumbnail`}
-                    className="w-full h-full object-cover"
-                  />
-                  {/* Play button overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-40 transition-all">
-                    <div className="w-20 h-20 rounded-full bg-white bg-opacity-90 flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                      <svg className="w-10 h-10 text-indigo-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                  </div>
+          !showVideo && profile.thumbnailUrl ? (
+            // Show thumbnail with play button overlay
+            <div className="relative w-full h-full cursor-pointer" onClick={() => setShowVideo(true)}>
+              <img
+                src={getDirectImageUrl(profile.thumbnailUrl)}
+                alt={`${profile.name} video thumbnail`}
+                className="w-full h-full object-cover"
+              />
+              {/* Play button overlay */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-40 transition-all">
+                <div className="w-20 h-20 rounded-full bg-white bg-opacity-90 flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                  <svg className="w-10 h-10 text-indigo-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
                 </div>
-              );
-            }
-            
+              </div>
+            </div>
+          ) : (
             // Show video player
-            return embedData.type === 'iframe' ? (
-              <div className="relative w-full h-full">
-                {videoLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
-                    <div className="text-white text-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-2"></div>
-                      <p className="text-sm">Loading video...</p>
-                    </div>
-                  </div>
-                )}
+            (() => {
+              const embedData = getEmbedUrl(profile.mediaUrl);
+              return embedData.type === 'iframe' ? (
                 <iframe
-                  src={embedData.url}
+                  src={`${embedData.url}?autoplay=1`}
                   className="w-full h-full"
                   allow="autoplay"
                   allowFullScreen
-                  onLoad={() => setVideoLoading(false)}
                 />
-              </div>
-            ) : (
-              <video
-                src={embedData.url}
-                controls
-                className="w-full h-full object-cover"
-                preload="metadata"
-                poster={getDirectImageUrl(profile.thumbnailUrl || '')}
-                autoPlay
-              >
-                Your browser does not support the video tag.
-              </video>
-            );
-          })()
+              ) : (
+                <video
+                  src={embedData.url}
+                  controls
+                  className="w-full h-full object-cover"
+                  preload="metadata"
+                  poster={getDirectImageUrl(profile.thumbnailUrl || '')}
+                  autoPlay
+                >
+                  Your browser does not support the video tag.
+                </video>
+              );
+            })()
+          )
         ) : (
           <img
             src={profile.mediaUrl}
