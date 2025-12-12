@@ -98,13 +98,10 @@ Profile Link: ${profileLink}
         {profile.mediaType === 'video' ? (
           (() => {
             const embedData = getEmbedUrl(profile.mediaUrl, showVideo);
-            const isGoogleDrive = embedData.type === 'iframe';
             
-            // For Google Drive: show thumbnail only if provided and not clicked yet
-            // For regular videos: always use thumbnail with HTML5 video player
-            if (!showVideo && profile.thumbnailUrl && !isGoogleDrive) {
+            // Show thumbnail with play button overlay if thumbnail exists and not clicked yet
+            if (!showVideo && profile.thumbnailUrl) {
               return (
-                // Show thumbnail with play button overlay (only for regular videos)
                 <div className="relative w-full h-full cursor-pointer" onClick={() => setShowVideo(true)}>
                   <img
                     src={getDirectImageUrl(profile.thumbnailUrl)}
