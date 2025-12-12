@@ -28,6 +28,21 @@ function getEmbedUrl(url: string): { type: 'video' | 'iframe', url: string } {
   return { type: 'video', url };
 }
 
+// Helper function to convert Google Drive image link to direct URL
+function getDirectImageUrl(url: string): string {
+  if (!url) return url;
+  
+  // Check if it's a Google Drive link
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (driveMatch) {
+    const fileId = driveMatch[1];
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+  }
+  
+  return url;
+}
+
+
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
@@ -84,7 +99,7 @@ Profile Link: ${profileLink}
             // Show thumbnail with play button overlay
             <div className="relative w-full h-full cursor-pointer" onClick={() => setShowVideo(true)}>
               <img
-                src={profile.thumbnailUrl}
+                src={getDirectImageUrl(profile.thumbnailUrl)}
                 alt={`${profile.name} video thumbnail`}
                 className="w-full h-full object-cover"
               />
@@ -114,7 +129,7 @@ Profile Link: ${profileLink}
                   controls
                   className="w-full h-full object-cover"
                   preload="metadata"
-                  poster={profile.thumbnailUrl}
+                  poster={getDirectImageUrl(profile.thumbnailUrl || '')}
                   autoPlay
                 >
                   Your browser does not support the video tag.
