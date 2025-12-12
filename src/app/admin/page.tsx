@@ -209,6 +209,7 @@ export default function AdminPage() {
       availability: profile.availability,
       mediaType: profile.mediaType,
       mediaUrl: profile.mediaUrl,
+      thumbnailUrl: profile.thumbnailUrl || '',
       bio: profile.bio || '',
       email: profile.email || '',
       location: profile.location || '',
