@@ -145,6 +145,7 @@ Profile Link: ${profileLink}
                 <video
                   src={embedData.url}
                   controls
+                  controlsList="nodownload"
                   className="w-full h-full object-contain"
                   preload="metadata"
                 >
