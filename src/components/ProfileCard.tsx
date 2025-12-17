@@ -9,8 +9,8 @@ interface ProfileCardProps {
 
 // Helper function to convert Google Drive link to embeddable format
 function getEmbedUrl(url: string): { type: 'video' | 'iframe', url: string } {
-  // Check if it's a YouTube link
-  const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/);
+  // Check if it's a YouTube link (including Shorts)
+  const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]+)/);
   if (youtubeMatch) {
     const videoId = youtubeMatch[1];
     return {
