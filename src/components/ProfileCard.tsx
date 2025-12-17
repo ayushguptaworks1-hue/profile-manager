@@ -120,7 +120,7 @@ Profile Link: ${profileLink}
                 src={embedData.url}
                 controls
                 controlsList="nodownload"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain bg-black"
                 preload="metadata"
                 poster={getDirectImageUrl(profile.thumbnailUrl || '')}
               >
