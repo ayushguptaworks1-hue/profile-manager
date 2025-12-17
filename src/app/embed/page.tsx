@@ -143,12 +143,12 @@ export default function EmbedPage() {
 
   return (
     <div className="bg-transparent">
-      {/* Banner Section - Full Width matching website blue */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 shadow-xl mb-8 py-12 px-4 text-center w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+      {/* Banner Section - Working within iframe constraints */}
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 shadow-2xl rounded-xl mb-8 py-10 px-6 text-center">
         <h2 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">
           Meet Our Team
         </h2>
-        <p className="text-xl text-blue-50">
+        <p className="text-lg text-blue-50">
           Discover talented professionals ready to bring expertise to your projects
         </p>
       </div>
