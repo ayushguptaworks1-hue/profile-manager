@@ -300,11 +300,11 @@ Profile Link: ${profileLink}
 
       {/* Video Modal */}
       {showVideoModal && profile.mediaType === 'video' && (
-        <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4" onClick={() => setShowVideoModal(false)}>
-          <div className="relative w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black flex items-center justify-center z-50" onClick={() => setShowVideoModal(false)}>
+          <div className="relative w-full h-full max-w-screen-2xl max-h-screen p-8 flex flex-col" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowVideoModal(false)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 flex items-center gap-2 bg-black bg-opacity-50 px-4 py-2 rounded-lg"
+              className="absolute top-4 right-4 text-white hover:text-gray-300 flex items-center gap-2 bg-black bg-opacity-70 px-4 py-2 rounded-lg z-10"
             >
               <span className="text-sm font-medium">Close</span>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -312,14 +312,14 @@ Profile Link: ${profileLink}
               </svg>
             </button>
 
-            <div className="bg-black rounded-lg overflow-hidden shadow-2xl">
+            <div className="flex-1 flex items-center justify-center">
               {profile.mediaUrl ? (
                 (() => {
                   const embedData = getEmbedUrl(profile.mediaUrl);
                   return embedData.type === 'iframe' ? (
                     <iframe
                       src={embedData.url}
-                      className="w-full aspect-video"
+                      className="w-full h-full max-h-[85vh]"
                       allow="autoplay; encrypted-media"
                       allowFullScreen
                     />
@@ -329,14 +329,14 @@ Profile Link: ${profileLink}
                       controls
                       autoPlay
                       controlsList="nodownload"
-                      className="w-full aspect-video object-contain"
+                      className="w-full h-full max-h-[85vh] object-contain"
                     >
                       Your browser does not support the video tag.
                     </video>
                   );
                 })()
               ) : (
-                <div className="w-full aspect-video flex items-center justify-center text-white bg-gray-900">
+                <div className="w-full h-full flex items-center justify-center text-white bg-gray-900">
                   <p>No video URL available</p>
                 </div>
               )}
