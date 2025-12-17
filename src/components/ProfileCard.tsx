@@ -55,7 +55,7 @@ function getDirectImageUrl(url: string): string {
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
   const [formData, setFormData] = useState({
     visitorName: '',
     visitorEmail: '',
@@ -104,36 +104,27 @@ Profile Link: ${profileLink}
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {/* Media Section */}
       <div className="relative w-full h-64 bg-gray-200">
-        {profile.mediaType === 'video' ? (
-          (() => {
-            const embedData = getEmbedUrl(profile.mediaUrl);
-            return embedData.type === 'iframe' ? (
-              <iframe
-                src={`${embedData.url}?autoplay=1&mute=1`}
-                className="w-full h-full"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-              />
-            ) : (
-              // Show video player directly with native controls
-              <video
-                src={embedData.url}
-                controls
-                controlsList="nodownload"
-                className="w-full h-full object-contain bg-black"
-                preload="metadata"
-                poster={getDirectImageUrl(profile.thumbnailUrl || '')}
-              >
-                Your browser does not support the video tag.
-              </video>
-            );
-          })()
-        ) : (
-          <img
-            src={profile.mediaUrl}
-            alt={profile.name}
-            className="w-full h-full object-cover"
-          />
+        {/* Always show image/thumbnail, even for video profiles */}
+        <img
+          src={profile.mediaType === 'video' && profile.thumbnailUrl 
+            ? getDirectImageUrl(profile.thumbnailUrl) 
+            : profile.mediaUrl}
+          alt={profile.name}
+          className="w-full h-full object-cover"
+        />
+        
+        {/* Video Play Button Overlay - only show if this is a video profile */}
+        {profile.mediaType === 'video' && (
+          <button
+            onClick={() => setShowVideoModal(true)}
+            className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-200 group"
+          >
+            <div className="bg-indigo-600 rounded-full p-4 group-hover:scale-110 transition-transform duration-200 shadow-lg">
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          </button>
         )}
         
         {/* Availability Badge */}
@@ -207,6 +198,17 @@ Profile Link: ${profileLink}
               </svg>
               View CV
             </a>
+          )}
+          {profile.mediaType === 'video' && (
+            <button
+              onClick={() => setShowVideoModal(true)}
+              className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium flex items-center justify-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              View Video
+            </button>
           )}
         </div>
       </div>
@@ -292,6 +294,47 @@ Profile Link: ${profileLink}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Video Modal */}
+      {showVideoModal && profile.mediaType === 'video' && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4" onClick={() => setShowVideoModal(false)}>
+          <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowVideoModal(false)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 flex items-center gap-2"
+            >
+              <span className="text-sm">Close</span>
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="bg-black rounded-lg overflow-hidden">
+              {(() => {
+                const embedData = getEmbedUrl(profile.mediaUrl);
+                return embedData.type === 'iframe' ? (
+                  <iframe
+                    src={embedData.url}
+                    className="w-full aspect-video"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={embedData.url}
+                    controls
+                    autoPlay
+                    controlsList="nodownload"
+                    className="w-full aspect-video object-contain bg-black"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                );
+              })()}
+            </div>
           </div>
         </div>
       )}
