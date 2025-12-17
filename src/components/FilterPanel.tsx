@@ -92,26 +92,44 @@ export default function FilterPanel({ roles, skills, onFilterChange }: FilterPan
       {/* Skills Filter */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-3">Skills</label>
-        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
-          {skills.map((skill) => (
-            <button
-              key={skill}
-              onClick={() => handleSkillToggle(skill)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
-                selectedSkills.includes(skill)
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {skill}
-            </button>
-          ))}
-        </div>
+        
+        {/* Selected Skills - Shown at top */}
         {selectedSkills.length > 0 && (
-          <p className="text-sm text-gray-600 mt-3">
-            {selectedSkills.length} skill{selectedSkills.length !== 1 ? 's' : ''} selected
-          </p>
+          <div className="mb-3 pb-3 border-b border-gray-200">
+            <p className="text-xs text-gray-500 mb-2 uppercase font-semibold">
+              Selected ({selectedSkills.length})
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {selectedSkills.map((skill) => (
+                <button
+                  key={`selected-${skill}`}
+                  onClick={() => handleSkillToggle(skill)}
+                  className="px-3 py-1 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-200 flex items-center gap-1"
+                >
+                  {skill}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
         )}
+        
+        {/* All Skills */}
+        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
+          {skills
+            .filter(skill => !selectedSkills.includes(skill))
+            .map((skill) => (
+              <button
+                key={skill}
+                onClick={() => handleSkillToggle(skill)}
+                className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
+              >
+                {skill}
+              </button>
+            ))}
+        </div>
       </div>
     </div>
   );
