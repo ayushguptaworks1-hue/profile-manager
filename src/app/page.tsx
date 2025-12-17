@@ -156,12 +156,49 @@ export default function Home() {
 
           {/* Profiles Grid */}
           <div className="lg:col-span-3">
-            <div className="mb-6">
+            <div className="mb-6 flex justify-between items-center flex-wrap gap-4">
               <p className="text-gray-700 text-lg">
                 Showing <span className="font-bold text-indigo-600">{currentProfiles.length}</span> of{' '}
                 <span className="font-bold">{filteredProfiles.length}</span> profiles
                 {filteredProfiles.length !== profiles.length && ` (${profiles.length} total)`}
               </p>
+              
+              {/* Pagination - Top */}
+              {totalPages > 1 && currentProfiles.length > 0 && (
+                <div className="flex justify-center items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                  >
+                    Previous
+                  </button>
+                  
+                  <div className="flex gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-2 rounded-lg font-medium text-sm ${
+                          currentPage === page
+                            ? 'bg-indigo-600 text-white'
+                            : 'border border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
 
             {currentProfiles.length > 0 ? (
