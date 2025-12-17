@@ -9,6 +9,16 @@ interface ProfileCardProps {
 
 // Helper function to convert Google Drive link to embeddable format
 function getEmbedUrl(url: string): { type: 'video' | 'iframe', url: string } {
+  // Check if it's a YouTube link
+  const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/);
+  if (youtubeMatch) {
+    const videoId = youtubeMatch[1];
+    return {
+      type: 'iframe',
+      url: `https://www.youtube.com/embed/${videoId}`
+    };
+  }
+  
   // Check if it's a Google Drive link
   const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (driveMatch) {
@@ -118,7 +128,7 @@ Profile Link: ${profileLink}
               const embedData = getEmbedUrl(profile.mediaUrl);
               return embedData.type === 'iframe' ? (
                 <iframe
-                  src={embedData.url}
+                  src={`${embedData.url}?autoplay=1&mute=1`}
                   className="w-full h-full"
                   allow="autoplay; encrypted-media"
                   allowFullScreen
