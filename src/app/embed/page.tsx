@@ -143,12 +143,12 @@ export default function EmbedPage() {
 
   return (
     <div className="bg-white">
-      {/* Banner Section - Blends with white background */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 shadow-2xl mb-8 py-12 px-6 text-center">
-        <h2 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+      {/* Banner Section - White background */}
+      <div className="bg-white shadow-lg mb-8 py-12 px-6 text-center border-b-4 border-blue-600">
+        <h2 className="text-5xl font-bold text-gray-900 mb-4">
           Meet Our Team
         </h2>
-        <p className="text-xl text-blue-50 max-w-3xl mx-auto">
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           Discover talented professionals ready to bring expertise to your projects
         </p>
       </div>
