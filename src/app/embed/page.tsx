@@ -142,13 +142,13 @@ export default function EmbedPage() {
   }
 
   return (
-    <div className="bg-transparent">
-      {/* Banner Section */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-xl mb-8 p-8 text-center">
+    <div className="bg-transparent -mt-8 -mx-4 sm:-mx-6 lg:-mx-8">
+      {/* Banner Section - Matching website blue */}
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 shadow-xl mb-8 p-8 text-center">
         <h2 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">
           Meet Our Team
         </h2>
-        <p className="text-xl text-indigo-100">
+        <p className="text-xl text-blue-50">
           Discover talented professionals ready to bring expertise to your projects
         </p>
       </div>
