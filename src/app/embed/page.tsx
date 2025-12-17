@@ -143,7 +143,17 @@ export default function EmbedPage() {
 
   return (
     <div className="bg-transparent">
-      {/* Main Content - No Header, No min-height */}
+      {/* Banner Section */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-xl mb-8 p-8 text-center">
+        <h2 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">
+          Meet Our Team
+        </h2>
+        <p className="text-xl text-indigo-100">
+          Discover talented professionals ready to bring expertise to your projects
+        </p>
+      </div>
+
+      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
