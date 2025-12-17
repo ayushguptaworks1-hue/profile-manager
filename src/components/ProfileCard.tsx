@@ -119,7 +119,7 @@ Profile Link: ${profileLink}
               <video
                 src={embedData.url}
                 controls
-                className="w-full h-full object-contain bg-black"
+                className="w-full h-full object-cover"
                 preload="metadata"
                 poster={getDirectImageUrl(profile.thumbnailUrl || '')}
               >
