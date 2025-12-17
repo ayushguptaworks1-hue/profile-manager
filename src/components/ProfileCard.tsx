@@ -121,7 +121,16 @@ Profile Link: ${profileLink}
                   <div 
                     className="absolute inset-0 bg-cover bg-center cursor-pointer z-10 group"
                     style={{ backgroundImage: `url('${getDirectImageUrl(profile.thumbnailUrl)}')` }}
-                    onClick={() => setShowVideo(true)}
+                    onClick={(e) => {
+                      setShowVideo(true);
+                      // Auto-play video after thumbnail click
+                      setTimeout(() => {
+                        const video = e.currentTarget.parentElement?.querySelector('video');
+                        if (video) {
+                          video.play().catch(err => console.log('Autoplay prevented:', err));
+                        }
+                      }, 100);
+                    }}
                   >
                     {/* Play icon indicator */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all">
@@ -138,7 +147,6 @@ Profile Link: ${profileLink}
                   controls
                   className="w-full h-full object-contain"
                   preload="metadata"
-                  autoPlay={showVideo}
                 >
                   Your browser does not support the video tag.
                 </video>
