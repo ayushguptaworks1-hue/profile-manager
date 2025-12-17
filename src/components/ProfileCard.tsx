@@ -115,16 +115,33 @@ Profile Link: ${profileLink}
                 allowFullScreen
               />
             ) : (
-              // Show video player directly with thumbnail as poster
-              <video
-                src={embedData.url}
-                controls
-                className="w-full h-full object-cover"
-                preload="metadata"
-                poster={getDirectImageUrl(profile.thumbnailUrl || '')}
-              >
-                Your browser does not support the video tag.
-              </video>
+              // Show video with custom thumbnail overlay
+              <div className="relative w-full h-full bg-black">
+                {profile.thumbnailUrl && (
+                  <img
+                    src={getDirectImageUrl(profile.thumbnailUrl)}
+                    alt={`${profile.name} thumbnail`}
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    style={{ display: 'block' }}
+                    onLoad={(e) => {
+                      const video = e.currentTarget.nextElementSibling as HTMLVideoElement;
+                      if (video) {
+                        video.addEventListener('play', () => {
+                          e.currentTarget.style.display = 'none';
+                        }, { once: true });
+                      }
+                    }}
+                  />
+                )}
+                <video
+                  src={embedData.url}
+                  controls
+                  className="relative w-full h-full object-contain"
+                  preload="metadata"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
             );
           })()
         ) : (
