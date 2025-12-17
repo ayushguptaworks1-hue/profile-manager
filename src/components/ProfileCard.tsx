@@ -95,48 +95,48 @@ Profile Link: ${profileLink}
       {/* Media Section */}
       <div className="relative w-full h-64 bg-gray-200">
         {profile.mediaType === 'video' ? (
-          !showVideo && profile.thumbnailUrl ? (
-            // Show thumbnail with play button overlay
-            <div className="relative w-full h-full cursor-pointer" onClick={() => setShowVideo(true)}>
-              <img
-                src={getDirectImageUrl(profile.thumbnailUrl)}
-                alt={`${profile.name} video thumbnail`}
-                className="w-full h-full object-cover"
-              />
-              {/* Play button overlay */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-40 transition-all">
-                <div className="w-20 h-20 rounded-full bg-white bg-opacity-90 flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                  <svg className="w-10 h-10 text-indigo-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
+          (() => {
+            const embedData = getEmbedUrl(profile.mediaUrl);
+            return embedData.type === 'iframe' ? (
+              profile.thumbnailUrl && !showVideo ? (
+                // Show thumbnail with play button overlay for Google Drive videos
+                <div className="relative w-full h-full cursor-pointer" onClick={() => setShowVideo(true)}>
+                  <img
+                    src={getDirectImageUrl(profile.thumbnailUrl)}
+                    alt={`${profile.name} video thumbnail`}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Play button overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-40 transition-all">
+                    <div className="w-20 h-20 rounded-full bg-white bg-opacity-90 flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                      <svg className="w-10 h-10 text-indigo-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ) : (
-            // Show video player
-            (() => {
-              const embedData = getEmbedUrl(profile.mediaUrl);
-              return embedData.type === 'iframe' ? (
+              ) : (
+                // Show Google Drive iframe
                 <iframe
                   src={embedData.url}
                   className="w-full h-full"
                   allow="autoplay; encrypted-media"
                   allowFullScreen
                 />
-              ) : (
-                <video
-                  src={embedData.url}
-                  controls
-                  className="w-full h-full object-cover"
-                  preload="metadata"
-                  poster={getDirectImageUrl(profile.thumbnailUrl || '')}
-                  autoPlay
-                >
-                  Your browser does not support the video tag.
-                </video>
-              );
-            })()
-          )
+              )
+            ) : (
+              // Regular video with native controls
+              <video
+                src={embedData.url}
+                controls
+                className="w-full h-full object-cover"
+                preload="metadata"
+                poster={getDirectImageUrl(profile.thumbnailUrl || '')}
+              >
+                Your browser does not support the video tag.
+              </video>
+            );
+          })()
         ) : (
           <img
             src={profile.mediaUrl}
