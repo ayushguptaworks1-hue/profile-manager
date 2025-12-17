@@ -124,17 +124,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Hero Header */}
+      <header className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900">Team Profiles</h1>
-              <p className="text-gray-600 mt-1">Discover our talented team members</p>
+            <div className="text-white">
+              <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">Team Profile</h1>
+              <p className="text-xl text-indigo-100 max-w-2xl">
+                Meet our talented professionals bringing expertise and innovation to every project
+              </p>
             </div>
             <Link
               href="/admin"
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              className="bg-white text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-all duration-200 font-semibold shadow-xl hover:shadow-2xl hover:scale-105"
             >
               Admin Panel
             </Link>
