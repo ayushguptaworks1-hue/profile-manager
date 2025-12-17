@@ -115,16 +115,31 @@ Profile Link: ${profileLink}
                 allowFullScreen
               />
             ) : (
-              // Show video player with proper thumbnail
-              <video
-                src={embedData.url}
-                controls
-                className="w-full h-full object-contain bg-black"
-                preload="metadata"
-                poster={getDirectImageUrl(profile.thumbnailUrl || '')}
-              >
-                Your browser does not support the video tag.
-              </video>
+              // Show video player with full-size thumbnail overlay
+              <div className="relative w-full h-full bg-black">
+                {!showVideo && profile.thumbnailUrl && (
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center cursor-pointer z-10 flex items-center justify-center group"
+                    style={{ backgroundImage: `url('${getDirectImageUrl(profile.thumbnailUrl)}')` }}
+                    onClick={() => setShowVideo(true)}
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white bg-opacity-90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <svg className="w-8 h-8 text-indigo-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+                <video
+                  src={embedData.url}
+                  controls
+                  className="w-full h-full object-contain"
+                  preload="metadata"
+                  autoPlay={showVideo}
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
             );
           })()
         ) : (
