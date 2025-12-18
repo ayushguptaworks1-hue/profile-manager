@@ -211,13 +211,14 @@ Profile Link: ${profileLink}
 
       {/* Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4 overflow-y-auto" onClick={() => setShowContactModal(false)}>
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 my-8" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Hire {profile.name}</h3>
-              <button
-                onClick={() => setShowContactModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999] overflow-y-auto" onClick={() => setShowContactModal(false)}>
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-900">Hire {profile.name}</h3>
+                <button
+                  onClick={() => setShowContactModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -290,6 +291,7 @@ Profile Link: ${profileLink}
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}
