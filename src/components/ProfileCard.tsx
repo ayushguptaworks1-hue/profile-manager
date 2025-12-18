@@ -62,6 +62,17 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     message: ''
   });
 
+  const handleOpenModal = () => {
+    setShowContactModal(true);
+    // Scroll modal into view after a brief delay to ensure it's rendered
+    setTimeout(() => {
+      document.getElementById(`hire-modal-${profile.id}`)?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+    }, 100);
+  };
+
   const availabilityColors = {
     'In Office': 'bg-blue-100 text-blue-800 border-blue-300',
     'Remote': 'bg-green-100 text-green-800 border-green-300',
@@ -187,7 +198,7 @@ Profile Link: ${profileLink}
         <div className="flex gap-2 mt-4">
           {profile.email && (
             <button
-              onClick={() => setShowContactModal(true)}
+              onClick={handleOpenModal}
               className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium"
             >
               Hire
@@ -212,7 +223,7 @@ Profile Link: ${profileLink}
       {/* Contact Modal */}
       {showContactModal && (
         <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-60 z-[99999] flex items-start justify-center pt-20 pb-10 px-4 overflow-y-auto" onClick={() => setShowContactModal(false)}>
-          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative" onClick={(e) => e.stopPropagation()}>
+          <div id={`hire-modal-${profile.id}`} className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-900">Hire {profile.name}</h3>
               <button
