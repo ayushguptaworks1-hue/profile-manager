@@ -190,7 +190,7 @@ Profile Link: ${profileLink}
               onClick={() => setShowContactModal(true)}
               className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium"
             >
-              Contact
+              Hire
             </button>
           )}
           {profile.cvUrl && (
