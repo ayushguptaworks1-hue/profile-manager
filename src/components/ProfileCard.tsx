@@ -62,17 +62,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     message: ''
   });
 
-  const handleOpenModal = () => {
-    setShowContactModal(true);
-    // Scroll modal into view after a brief delay to ensure it's rendered
-    setTimeout(() => {
-      document.getElementById(`hire-modal-${profile.id}`)?.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-      });
-    }, 100);
-  };
-
   const availabilityColors = {
     'In Office': 'bg-blue-100 text-blue-800 border-blue-300',
     'Remote': 'bg-green-100 text-green-800 border-green-300',
@@ -198,7 +187,7 @@ Profile Link: ${profileLink}
         <div className="flex gap-2 mt-4">
           {profile.email && (
             <button
-              onClick={handleOpenModal}
+              onClick={() => setShowContactModal(true)}
               className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium"
             >
               Hire
@@ -216,19 +205,20 @@ Profile Link: ${profileLink}
               </svg>
               View CV
             </a>
-          )}
         </div>
+      </div>
 
-        {/* Inline Contact Form */}
-        {showContactModal && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg border-2 border-indigo-200">
-            <div className="flex justify-between items-center mb-3">
-              <h4 className="text-lg font-bold text-gray-900">Hire {profile.name}</h4>
+      {/* Contact Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4" onClick={() => setShowContactModal(false)}>
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Hire {profile.name}</h3>
               <button
                 onClick={() => setShowContactModal(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -300,8 +290,8 @@ Profile Link: ${profileLink}
               </div>
             </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
