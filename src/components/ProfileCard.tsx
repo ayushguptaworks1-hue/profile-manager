@@ -1,7 +1,7 @@
 'use client';
 
 import { Profile } from '@/types/profile';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface ProfileCardProps {
   profile: Profile;
@@ -55,12 +55,20 @@ function getDirectImageUrl(url: string): string {
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     visitorName: '',
     visitorEmail: '',
     visitorPhone: '',
     message: ''
   });
+
+  // Auto-scroll to modal when it opens
+  useEffect(() => {
+    if (showContactModal && modalRef.current) {
+      modalRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [showContactModal]);
 
   const availabilityColors = {
     'In Office': 'bg-blue-100 text-blue-800 border-blue-300',
@@ -212,7 +220,7 @@ Profile Link: ${profileLink}
       {/* Contact Modal */}
       {showContactModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999] p-4" onClick={() => setShowContactModal(false)}>
-          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div ref={modalRef} className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-900">Hire {profile.name}</h3>
               <button
