@@ -102,15 +102,17 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       redirect: 'follow'
     }).catch(error => console.error('Error submitting form:', error));
 
-    // Wait 2 seconds then close modal and show success
+    // Wait 2 seconds then show success notification
     setTimeout(() => {
-      setShowContactModal(false);
-      setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
       setIsSubmitting(false);
       setShowSuccess(true);
       
-      // Hide success message after 5 seconds
-      setTimeout(() => setShowSuccess(false), 5000);
+      // Close modal after 5 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+        setShowContactModal(false);
+        setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
+      }, 5000);
     }, 2000);
   };
 
