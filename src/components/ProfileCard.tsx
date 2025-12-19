@@ -55,6 +55,7 @@ function getDirectImageUrl(url: string): string {
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     visitorName: '',
@@ -62,6 +63,9 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     visitorPhone: '',
     message: ''
   });
+
+  // Google Sheet Web App URL
+  const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxFnumFLV0Uon-pbj4A4HJaQrqdBmpq2S0M_84LCYVmUcFkBNqKk6g1OWooOlua-xEX9g/exec';
 
   // Auto-scroll to modal when it opens
   useEffect(() => {
@@ -78,33 +82,38 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     'On Leave': 'bg-red-100 text-red-800 border-red-300'
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // Create email content with visitor info and profile link
-    const profileLink = window.location.href;
-    const emailBody = `
-New Contact Request for ${profile.name}
+    try {
+      // Send data to Google Sheet
+      const response = await fetch(GOOGLE_SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          profileName: profile.name,
+          profileEmail: profile.email,
+          visitorName: formData.visitorName,
+          visitorEmail: formData.visitorEmail,
+          visitorPhone: formData.visitorPhone,
+          requirements: formData.message
+        }),
+      });
 
-Visitor Information:
-Name: ${formData.visitorName}
-Email: ${formData.visitorEmail}
-Phone: ${formData.visitorPhone}
-
-Message:
-${formData.message}
-
-Profile Link: ${profileLink}
-    `.trim();
-
-    // Send to profile owner's email
-    const mailtoLink = `mailto:${profile.email}?subject=Contact Request from ${formData.visitorName}&body=${encodeURIComponent(emailBody)}`;
-    window.location.href = mailtoLink;
-    
-    // Close modal and reset form
-    setShowContactModal(false);
-    setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
-    alert('Your contact request is being sent!');
+      // Close modal and reset form
+      setShowContactModal(false);
+      setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
+      alert('Your hire request has been submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -287,14 +296,16 @@ Profile Link: ${profileLink}
                   type="button"
                   onClick={() => setShowContactModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-sm"
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Send Request
+                  {isSubmitting ? 'Sending...' : 'Send Request'}
                 </button>
               </div>
             </form>
