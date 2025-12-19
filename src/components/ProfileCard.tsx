@@ -102,7 +102,9 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       redirect: 'follow'
     }).catch(error => console.error('Error submitting form:', error));
 
-    // Wait 2 seconds then show success notification
+    // Clear form immediately and wait 2 seconds then show success notification
+    setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
+    
     setTimeout(() => {
       setIsSubmitting(false);
       setShowSuccess(true);
@@ -111,7 +113,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       setTimeout(() => {
         setShowSuccess(false);
         setShowContactModal(false);
-        setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
       }, 5000);
     }, 2000);
   };
