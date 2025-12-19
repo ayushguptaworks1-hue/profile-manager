@@ -56,6 +56,7 @@ function getDirectImageUrl(url: string): string {
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     visitorName: '',
@@ -82,40 +83,49 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     'On Leave': 'bg-red-100 text-red-800 border-red-300'
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
-    try {
-      // Create form data
-      const formDataToSend = new FormData();
-      formDataToSend.append('profileName', profile.name);
-      formDataToSend.append('profileEmail', profile.email || '');
-      formDataToSend.append('visitorName', formData.visitorName);
-      formDataToSend.append('visitorEmail', formData.visitorEmail);
-      formDataToSend.append('visitorPhone', formData.visitorPhone);
-      formDataToSend.append('requirements', formData.message);
+    // Create URL-encoded form data
+    const formDataToSend = new URLSearchParams();
+    formDataToSend.append('profileName', profile.name);
+    formDataToSend.append('profileEmail', profile.email || '');
+    formDataToSend.append('visitorName', formData.visitorName);
+    formDataToSend.append('visitorEmail', formData.visitorEmail);
+    formDataToSend.append('visitorPhone', formData.visitorPhone);
+    formDataToSend.append('requirements', formData.message);
 
-      // Send data to Google Sheet using fetch
-      await fetch(GOOGLE_SHEET_URL, {
-        method: 'POST',
-        body: formDataToSend,
-      });
+    // Send data in background (non-blocking)
+    fetch(GOOGLE_SHEET_URL + '?' + formDataToSend.toString(), {
+      method: 'GET',
+      redirect: 'follow'
+    }).catch(error => console.error('Error submitting form:', error));
 
-      // Close modal and reset form
-      setShowContactModal(false);
-      setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
-      alert('Your hire request has been submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('There was an error submitting your request. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Immediately close modal and show success
+    setShowContactModal(false);
+    setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
+    setShowSuccess(true);
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
   };
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      {/* Success Notification */}
+      {showSuccess && (
+        <div className="fixed top-4 right-4 z-[99999] bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3 animate-slide-in">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <p className="font-semibold">Request Submitted Successfully!</p>
+            <p className="text-sm">We'll get back to you soon</p>
+          </div>
+        </div>
+      )}
+
       {/* Media Section */}
       <div className="relative w-full h-64 bg-gray-200">
         {profile.mediaType === 'video' ? (
