@@ -56,6 +56,7 @@ function getDirectImageUrl(url: string): string {
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     visitorName: '',
@@ -84,6 +85,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
     // Create URL-encoded form data
     const formDataToSend = new URLSearchParams();
@@ -104,6 +106,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     setTimeout(() => {
       setShowContactModal(false);
       setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
+      setIsSubmitting(false);
       setShowSuccess(true);
       
       // Hide success message after 5 seconds
@@ -311,7 +314,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                   type="submit"
                   className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
                 >
-                  Send Request
+                  {isSubmitting ? 'Submitting...' : 'Send Request'}
                 </button>
               </div>
             </form>
