@@ -100,25 +100,27 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       redirect: 'follow'
     }).catch(error => console.error('Error submitting form:', error));
 
-    // Immediately close modal and show success
-    setShowContactModal(false);
-    setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
-    setShowSuccess(true);
-    
-    // Hide success message after 3 seconds
-    setTimeout(() => setShowSuccess(false), 3000);
+    // Wait 2 seconds then close modal and show success
+    setTimeout(() => {
+      setShowContactModal(false);
+      setFormData({ visitorName: '', visitorEmail: '', visitorPhone: '', message: '' });
+      setShowSuccess(true);
+      
+      // Hide success message after 5 seconds
+      setTimeout(() => setShowSuccess(false), 5000);
+    }, 2000);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {/* Success Notification */}
       {showSuccess && (
-        <div className="fixed top-4 right-4 z-[99999] bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3 animate-slide-in">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] bg-green-500 text-white px-8 py-6 rounded-lg shadow-2xl flex items-center gap-4 animate-slide-in">
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
           <div>
-            <p className="font-semibold">Request Submitted Successfully!</p>
+            <p className="text-lg font-bold">Request Submitted Successfully!</p>
             <p className="text-sm">We&apos;ll get back to you soon</p>
           </div>
         </div>
