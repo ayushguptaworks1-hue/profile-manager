@@ -116,19 +116,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      {/* Success Notification */}
-      {showSuccess && (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[99999] bg-green-500 text-white px-8 py-6 rounded-lg shadow-2xl flex items-center gap-4 animate-slide-in">
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          <div>
-            <p className="text-lg font-bold">Request Submitted Successfully!</p>
-            <p className="text-sm">We&apos;ll get back to you soon</p>
-          </div>
-        </div>
-      )}
-
       {/* Media Section */}
       <div className="relative w-full h-64 bg-gray-200">
         {profile.mediaType === 'video' ? (
@@ -241,6 +228,30 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       {showContactModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999] p-4" onClick={() => setShowContactModal(false)}>
           <div ref={modalRef} className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            {/* Success Notification in Modal */}
+            {showSuccess && (
+              <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <div className="flex-1">
+                    <p className="font-semibold">Request Submitted Successfully!</p>
+                    <p className="text-sm mt-1">We&apos;ll get back to you soon. Or{' '}
+                      <a 
+                        href="https://cal.com/gsachdeva/30min" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="underline font-medium hover:text-blue-900"
+                      >
+                        book a call now
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-900">Hire {profile.name}</h3>
               <button
