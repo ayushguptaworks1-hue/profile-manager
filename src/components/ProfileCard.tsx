@@ -119,7 +119,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           </svg>
           <div>
             <p className="font-semibold">Request Submitted Successfully!</p>
-            <p className="text-sm">We'll get back to you soon</p>
+            <p className="text-sm">We&apos;ll get back to you soon</p>
           </div>
         </div>
       )}
@@ -302,7 +302,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                   type="button"
                   onClick={() => setShowContactModal(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-sm"
-                  disabled={isSubmitting}
                 >
                   Cancel
                 </button>
