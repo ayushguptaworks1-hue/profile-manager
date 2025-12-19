@@ -87,21 +87,19 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     setIsSubmitting(true);
     
     try {
-      // Send data to Google Sheet
-      const response = await fetch(GOOGLE_SHEET_URL, {
+      // Create form data
+      const formDataToSend = new FormData();
+      formDataToSend.append('profileName', profile.name);
+      formDataToSend.append('profileEmail', profile.email || '');
+      formDataToSend.append('visitorName', formData.visitorName);
+      formDataToSend.append('visitorEmail', formData.visitorEmail);
+      formDataToSend.append('visitorPhone', formData.visitorPhone);
+      formDataToSend.append('requirements', formData.message);
+
+      // Send data to Google Sheet using fetch
+      await fetch(GOOGLE_SHEET_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profileName: profile.name,
-          profileEmail: profile.email,
-          visitorName: formData.visitorName,
-          visitorEmail: formData.visitorEmail,
-          visitorPhone: formData.visitorPhone,
-          requirements: formData.message
-        }),
+        body: formDataToSend,
       });
 
       // Close modal and reset form
