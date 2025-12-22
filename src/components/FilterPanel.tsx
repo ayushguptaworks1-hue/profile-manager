@@ -76,8 +76,8 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
     if (searchQuery) params.set('search', searchQuery);
     
     const queryString = params.toString();
-    // Use the embed page which is simpler and will work standalone
-    const baseUrl = 'https://profile-manager-eta-lac.vercel.app/embed';
+    // Use WordPress URL so it works with the iframe setup
+    const baseUrl = 'https://gscoutsourcing.com/team-profile/';
     return queryString ? `${baseUrl}?${queryString}` : baseUrl;
   };
 
