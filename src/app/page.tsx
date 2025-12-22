@@ -47,9 +47,6 @@ function HomeContent() {
       
       console.log('Applying filters:', parsedFilters);
       setFilters(parsedFilters);
-      
-      // Show alert for debugging
-      alert(`Filters from URL:\nSkills: ${skills}\nRole: ${role}\nAvailability: ${availability}\nSearch: ${search}`);
     } else {
       console.log('No URL parameters found');
     }
