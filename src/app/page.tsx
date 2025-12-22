@@ -25,23 +25,28 @@ function HomeContent() {
 
   // Initialize filters from URL on mount
   useEffect(() => {
-    const role = searchParams.get('role') || '';
-    const availability = searchParams.get('availability') || '';
-    const skills = searchParams.get('skills') || '';
-    const search = searchParams.get('search') || '';
+    // Read directly from window.location to handle iframe cases
+    const urlParams = new URLSearchParams(window.location.search);
+    const role = urlParams.get('role') || '';
+    const availability = urlParams.get('availability') || '';
+    const skills = urlParams.get('skills') || '';
+    const search = urlParams.get('search') || '';
     
+    console.log('Window URL:', window.location.href);
     console.log('URL Parameters loaded:', { role, availability, skills, search });
     
-    const parsedFilters = {
-      role,
-      availability,
-      selectedSkills: skills ? skills.split(',').map(s => s.trim()) : [],
-      searchQuery: search
-    };
-    
-    console.log('Setting filters:', parsedFilters);
-    setFilters(parsedFilters);
-  }, [searchParams]);
+    if (role || availability || skills || search) {
+      const parsedFilters = {
+        role,
+        availability,
+        selectedSkills: skills ? skills.split(',').map(s => s.trim()) : [],
+        searchQuery: search
+      };
+      
+      console.log('Setting filters:', parsedFilters);
+      setFilters(parsedFilters);
+    }
+  }, []);
 
   // Fetch profiles from Supabase
   useEffect(() => {
