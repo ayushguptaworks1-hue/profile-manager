@@ -30,12 +30,17 @@ function HomeContent() {
     const skills = searchParams.get('skills') || '';
     const search = searchParams.get('search') || '';
     
-    setFilters({
+    console.log('URL Parameters loaded:', { role, availability, skills, search });
+    
+    const parsedFilters = {
       role,
       availability,
-      selectedSkills: skills ? skills.split(',') : [],
+      selectedSkills: skills ? skills.split(',').map(s => s.trim()) : [],
       searchQuery: search
-    });
+    };
+    
+    console.log('Setting filters:', parsedFilters);
+    setFilters(parsedFilters);
   }, [searchParams]);
 
   // Fetch profiles from Supabase
