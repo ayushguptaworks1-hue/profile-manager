@@ -161,7 +161,9 @@ function HomeContent() {
     if (filters.searchQuery) params.set('search', filters.searchQuery);
     
     const queryString = params.toString();
-    const url = queryString ? `${window.location.origin}${window.location.pathname}?${queryString}` : window.location.origin;
+    // Use the actual deployed URL to avoid iframe issues
+    const baseUrl = 'https://gscoutsourcing.com/team-profile/';
+    const url = queryString ? `${baseUrl}?${queryString}` : baseUrl;
     
     navigator.clipboard.writeText(url).then(() => {
       const btn = document.getElementById('copy-btn');
@@ -183,7 +185,9 @@ function HomeContent() {
     if (filters.searchQuery) params.set('search', filters.searchQuery);
     
     const queryString = params.toString();
-    return queryString ? `${window.location.origin}${window.location.pathname}?${queryString}` : window.location.origin;
+    // Use the actual deployed URL to avoid iframe issues
+    const baseUrl = 'https://gscoutsourcing.com/team-profile/';
+    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
   };
 
   if (loading) {
