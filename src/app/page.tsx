@@ -240,26 +240,29 @@ function HomeContent() {
           <div className="lg:col-span-3">
             {/* Shareable Filtered Link */}
             {(filters.role || filters.availability || filters.selectedSkills.length > 0 || filters.searchQuery) && (
-              <div className="mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+              <div className="mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 border-2 border-indigo-400 rounded-lg p-4 shadow-lg">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex-1 min-w-0">
-                    <label className="block text-xs font-semibold text-indigo-900 mb-1">
-                      Shareable Filtered Link
+                    <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                      📋 Copy this link to share filtered results:
                     </label>
                     <input
                       type="text"
                       readOnly
                       value={getFilteredUrl()}
                       onClick={(e) => e.currentTarget.select()}
-                      className="w-full px-3 py-2 bg-white border border-indigo-300 rounded text-sm text-gray-700 font-mono"
+                      className="w-full px-4 py-3 bg-white border-2 border-white rounded-lg text-sm text-gray-900 font-mono shadow-inner"
                     />
                   </div>
                   <button
                     id="copy-btn"
                     onClick={copyFilteredLink}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium text-sm whitespace-nowrap mt-5"
+                    className="px-6 py-3 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 font-bold text-sm whitespace-nowrap mt-7 shadow-lg"
                   >
-                    Copy Link
+                    📋 Copy Link
                   </button>
                 </div>
               </div>
