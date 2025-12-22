@@ -32,7 +32,9 @@ function HomeContent() {
     const skills = urlParams.get('skills') || '';
     const search = urlParams.get('search') || '';
     
+    console.log('=== FILTER DEBUG ===');
     console.log('Window URL:', window.location.href);
+    console.log('URL Search:', window.location.search);
     console.log('URL Parameters loaded:', { role, availability, skills, search });
     
     if (role || availability || skills || search) {
@@ -43,8 +45,13 @@ function HomeContent() {
         searchQuery: search
       };
       
-      console.log('Setting filters:', parsedFilters);
+      console.log('Applying filters:', parsedFilters);
       setFilters(parsedFilters);
+      
+      // Show alert for debugging
+      alert(`Filters from URL:\nSkills: ${skills}\nRole: ${role}\nAvailability: ${availability}\nSearch: ${search}`);
+    } else {
+      console.log('No URL parameters found');
     }
   }, []);
 
