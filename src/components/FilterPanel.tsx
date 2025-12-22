@@ -80,9 +80,19 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
 
   const copyShareableLink = () => {
     const url = getShareableLink();
-    navigator.clipboard.writeText(url).then(() => {
-      alert(`Link copied!\n\n${url}\n\nShare this link with your clients to show them these filtered profiles.`);
-    });
+    
+    // Try to copy to clipboard
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        alert(`✅ Link copied to clipboard!\n\n${url}\n\nPaste and share this link with your clients.`);
+      }).catch(() => {
+        // Fallback if clipboard fails
+        prompt('Copy this link (Ctrl+C or Cmd+C):', url);
+      });
+    } else {
+      // Fallback for browsers without clipboard API
+      prompt('Copy this link (Ctrl+C or Cmd+C):', url);
+    }
   };
 
   const hasActiveFilters = role || availability || selectedSkills.length > 0 || searchQuery;
