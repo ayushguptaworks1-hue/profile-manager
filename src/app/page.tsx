@@ -164,8 +164,26 @@ function HomeContent() {
     const url = queryString ? `${window.location.origin}${window.location.pathname}?${queryString}` : window.location.origin;
     
     navigator.clipboard.writeText(url).then(() => {
-      alert('Filtered link copied to clipboard!');
+      const btn = document.getElementById('copy-btn');
+      if (btn) {
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => {
+          btn.textContent = 'Copy Link';
+        }, 2000);
+      }
     });
+  };
+
+  // Get current filtered URL
+  const getFilteredUrl = () => {
+    const params = new URLSearchParams();
+    if (filters.role) params.set('role', filters.role);
+    if (filters.availability) params.set('availability', filters.availability);
+    if (filters.selectedSkills.length > 0) params.set('skills', filters.selectedSkills.join(','));
+    if (filters.searchQuery) params.set('search', filters.searchQuery);
+    
+    const queryString = params.toString();
+    return queryString ? `${window.location.origin}${window.location.pathname}?${queryString}` : window.location.origin;
   };
 
   if (loading) {
@@ -216,25 +234,39 @@ function HomeContent() {
 
           {/* Profiles Grid */}
           <div className="lg:col-span-3">
+            {/* Shareable Filtered Link */}
+            {(filters.role || filters.availability || filters.selectedSkills.length > 0 || filters.searchQuery) && (
+              <div className="mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div className="flex-1 min-w-0">
+                    <label className="block text-xs font-semibold text-indigo-900 mb-1">
+                      Shareable Filtered Link
+                    </label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={getFilteredUrl()}
+                      onClick={(e) => e.currentTarget.select()}
+                      className="w-full px-3 py-2 bg-white border border-indigo-300 rounded text-sm text-gray-700 font-mono"
+                    />
+                  </div>
+                  <button
+                    id="copy-btn"
+                    onClick={copyFilteredLink}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium text-sm whitespace-nowrap mt-5"
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+            )}
+            
             <div className="mb-6 flex justify-between items-center flex-wrap gap-4">
               <p className="text-gray-700 text-lg">
                 Showing <span className="font-bold text-indigo-600">{currentProfiles.length}</span> of{' '}
                 <span className="font-bold">{filteredProfiles.length}</span> profiles
                 {filteredProfiles.length !== profiles.length && ` (${profiles.length} total)`}
               </p>
-              
-              {/* Copy Filtered Link Button */}
-              {(filters.role || filters.availability || filters.selectedSkills.length > 0 || filters.searchQuery) && (
-                <button
-                  onClick={copyFilteredLink}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium text-sm flex items-center gap-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  Copy Filtered Link
-                </button>
-              )}
             </div>
             
             {/* Pagination - Top */}
