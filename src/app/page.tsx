@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Profile } from '@/types/profile';
 import { supabase } from '@/lib/supabase';
 import ProfileCard from '@/components/ProfileCard';
 import FilterPanel from '@/components/FilterPanel';
 import Link from 'next/link';
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,6 +22,21 @@ export default function Home() {
   });
 
   const ITEMS_PER_PAGE = 8;
+
+  // Initialize filters from URL on mount
+  useEffect(() => {
+    const role = searchParams.get('role') || '';
+    const availability = searchParams.get('availability') || '';
+    const skills = searchParams.get('skills') || '';
+    const search = searchParams.get('search') || '';
+    
+    setFilters({
+      role,
+      availability,
+      selectedSkills: skills ? skills.split(',') : [],
+      searchQuery: search
+    });
+  }, [searchParams]);
 
   // Fetch profiles from Supabase
   useEffect(() => {
@@ -106,10 +124,49 @@ export default function Home() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentProfiles = filteredProfiles.slice(startIndex, endIndex);
 
-  // Reset to page 1 when filters change
+  // Update URL with current filters
+  const updateURL = () => {
+    const params = new URLSearchParams();
+    if (filters.role) params.set('role', filters.role);
+    if (filters.availability) params.set('availability', filters.availability);
+    if (filters.selectedSkills.length > 0) params.set('skills', filters.selectedSkills.join(','));
+    if (filters.searchQuery) params.set('search', filters.searchQuery);
+    
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : '/';
+    window.history.pushState({}, '', newUrl);
+  };
+
+  // Reset to page 1 when filters change and update URL
   useEffect(() => {
     setCurrentPage(1);
+    
+    const params = new URLSearchParams();
+    if (filters.role) params.set('role', filters.role);
+    if (filters.availability) params.set('availability', filters.availability);
+    if (filters.selectedSkills.length > 0) params.set('skills', filters.selectedSkills.join(','));
+    if (filters.searchQuery) params.set('search', filters.searchQuery);
+    
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : '/';
+    window.history.pushState({}, '', newUrl);
   }, [filters]);
+
+  // Copy filtered URL to clipboard
+  const copyFilteredLink = () => {
+    const params = new URLSearchParams();
+    if (filters.role) params.set('role', filters.role);
+    if (filters.availability) params.set('availability', filters.availability);
+    if (filters.selectedSkills.length > 0) params.set('skills', filters.selectedSkills.join(','));
+    if (filters.searchQuery) params.set('search', filters.searchQuery);
+    
+    const queryString = params.toString();
+    const url = queryString ? `${window.location.origin}${window.location.pathname}?${queryString}` : window.location.origin;
+    
+    navigator.clipboard.writeText(url).then(() => {
+      alert('Filtered link copied to clipboard!');
+    });
+  };
 
   if (loading) {
     return (
@@ -152,6 +209,7 @@ export default function Home() {
             <FilterPanel
               roles={roles}
               skills={skills}
+              initialFilters={filters}
               onFilterChange={setFilters}
             />
           </aside>
@@ -165,27 +223,41 @@ export default function Home() {
                 {filteredProfiles.length !== profiles.length && ` (${profiles.length} total)`}
               </p>
               
-              {/* Pagination - Top */}
-              {totalPages > 1 && currentProfiles.length > 0 && (
-                <div className="flex justify-center items-center gap-2">
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
-                  >
-                    Previous
-                  </button>
-                  
-                  <div className="flex gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 rounded-lg font-medium text-sm ${
-                          currentPage === page
-                            ? 'bg-indigo-600 text-white'
-                            : 'border border-gray-300 hover:bg-gray-50'
-                        }`}
+              {/* Copy Filtered Link Button */}
+              {(filters.role || filters.availability || filters.selectedSkills.length > 0 || filters.searchQuery) && (
+                <button
+                  onClick={copyFilteredLink}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium text-sm flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  Copy Filtered Link
+                </button>
+              )}
+            </div>
+            
+            {/* Pagination - Top */}
+            {totalPages > 1 && currentProfiles.length > 0 && (
+              <div className="mb-6 flex justify-center items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                >
+                  Previous
+                </button>
+                
+                <div className="flex gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-2 rounded-lg font-medium text-sm ${
+                        currentPage === page
+                          ? 'bg-indigo-600 text-white'
+                          : 'border border-gray-300 hover:bg-gray-50'
+                      }`}
                       >
                         {page}
                       </button>
@@ -201,7 +273,6 @@ export default function Home() {
                   </button>
                 </div>
               )}
-            </div>
 
             {currentProfiles.length > 0 ? (
               <>
@@ -271,5 +342,20 @@ export default function Home() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }

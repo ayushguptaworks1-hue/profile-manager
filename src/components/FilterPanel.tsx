@@ -1,10 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface FilterPanelProps {
   roles: string[];
   skills: string[];
+  initialFilters?: {
+    role: string;
+    availability: string;
+    selectedSkills: string[];
+    searchQuery: string;
+  };
   onFilterChange: (filters: {
     role: string;
     availability: string;
@@ -13,11 +19,21 @@ interface FilterPanelProps {
   }) => void;
 }
 
-export default function FilterPanel({ roles, skills, onFilterChange }: FilterPanelProps) {
-  const [role, setRole] = useState('');
-  const [availability, setAvailability] = useState('');
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+export default function FilterPanel({ roles, skills, initialFilters, onFilterChange }: FilterPanelProps) {
+  const [role, setRole] = useState(initialFilters?.role || '');
+  const [availability, setAvailability] = useState(initialFilters?.availability || '');
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(initialFilters?.selectedSkills || []);
+  const [searchQuery, setSearchQuery] = useState(initialFilters?.searchQuery || '');
+
+  // Update local state when initialFilters change (from URL)
+  useEffect(() => {
+    if (initialFilters) {
+      setRole(initialFilters.role);
+      setAvailability(initialFilters.availability);
+      setSelectedSkills(initialFilters.selectedSkills);
+      setSearchQuery(initialFilters.searchQuery);
+    }
+  }, [initialFilters]);
 
   const handleSkillToggle = (skill: string) => {
     const newSkills = selectedSkills.includes(skill)
