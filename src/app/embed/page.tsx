@@ -76,6 +76,25 @@ export default function EmbedPage() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  // Update parent window URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filters.role) params.set('role', filters.role);
+    if (filters.availability) params.set('availability', filters.availability);
+    if (filters.selectedSkills.length > 0) params.set('skills', filters.selectedSkills.join(','));
+    if (filters.searchQuery) params.set('search', filters.searchQuery);
+    
+    const queryString = params.toString();
+    
+    // Send URL update to parent window (WordPress)
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'updateURL',
+        queryString: queryString
+      }, '*');
+    }
+  }, [filters]);
+
   // Fetch profiles from Supabase
   useEffect(() => {
     fetchProfiles();
