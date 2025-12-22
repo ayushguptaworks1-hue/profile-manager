@@ -19,6 +19,63 @@ export default function EmbedPage() {
 
   const ITEMS_PER_PAGE = 8;
 
+  // Read URL parameters from both iframe URL and parent window URL
+  useEffect(() => {
+    const loadFiltersFromURL = () => {
+      // First try to get params from current window (iframe) URL
+      let params = new URLSearchParams(window.location.search);
+      
+      // If no params in iframe, try to get from parent window URL
+      if (!params.toString()) {
+        try {
+          // Try to read parent window's URL (may fail due to cross-origin)
+          const parentParams = new URLSearchParams(window.parent.location.search);
+          if (parentParams.toString()) {
+            params = parentParams;
+          }
+        } catch (e) {
+          // Cross-origin - parent URL not accessible, that's okay
+          console.log('Cannot access parent URL, using iframe URL only');
+        }
+      }
+      
+      const role = params.get('role') || '';
+      const availability = params.get('availability') || '';
+      const skills = params.get('skills') || '';
+      const search = params.get('search') || '';
+      
+      console.log('Embed page - URL params:', { role, availability, skills, search });
+      
+      if (role || availability || skills || search) {
+        setFilters({
+          role,
+          availability,
+          selectedSkills: skills ? skills.split(',').map(s => s.trim()) : [],
+          searchQuery: search
+        });
+      }
+    };
+    
+    loadFiltersFromURL();
+    
+    // Also listen for messages from parent window with filter parameters
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'setFilters') {
+        console.log('Received filters from parent:', event.data.filters);
+        const { role, availability, skills, search } = event.data.filters;
+        setFilters({
+          role: role || '',
+          availability: availability || '',
+          selectedSkills: skills ? skills.split(',').map((s: string) => s.trim()) : [],
+          searchQuery: search || ''
+        });
+      }
+    };
+    
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   // Fetch profiles from Supabase
   useEffect(() => {
     fetchProfiles();
