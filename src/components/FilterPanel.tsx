@@ -17,9 +17,10 @@ interface FilterPanelProps {
     selectedSkills: string[];
     searchQuery: string;
   }) => void;
+  isEmbedded?: boolean;
 }
 
-export default function FilterPanel({ roles, skills, initialFilters, onFilterChange }: FilterPanelProps) {
+export default function FilterPanel({ roles, skills, initialFilters, onFilterChange, isEmbedded = false }: FilterPanelProps) {
   const [role, setRole] = useState(initialFilters?.role || '');
   const [availability, setAvailability] = useState(initialFilters?.availability || '');
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialFilters?.selectedSkills || []);
@@ -66,8 +67,13 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
     onFilterChange({ role: '', availability: '', selectedSkills: [], searchQuery: '' });
   };
 
+  // When embedded, keep the panel minimal so it blends into the host page
+  const panelBase = isEmbedded
+    ? 'bg-transparent rounded-none shadow-none p-0 mb-0'
+    : 'bg-white rounded-lg shadow-md p-6 mb-8';
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8 sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto">
+    <div className={`${panelBase} sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto`}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Filters</h2>
         <button
