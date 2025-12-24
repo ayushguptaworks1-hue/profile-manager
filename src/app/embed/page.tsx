@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Profile } from '@/types/profile';
 import { supabase } from '@/lib/supabase';
 import ProfileCard from '@/components/ProfileCard';
@@ -24,6 +24,7 @@ export default function EmbedPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState(false);
+  const passwordRef = useRef<HTMLDivElement | null>(null);
 
   const ITEMS_PER_PAGE = 8;
 
@@ -34,6 +35,16 @@ export default function EmbedPage() {
       setIsAuthenticated(true);
     }
   }, []);
+
+  // Auto-scroll to the password card when not authenticated (useful for embedded view)
+  useEffect(() => {
+    if (!isAuthenticated && passwordRef.current) {
+      // Give the layout a tick to ensure it's rendered, then scroll
+      setTimeout(() => {
+        passwordRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    }
+  }, [isAuthenticated]);
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -248,7 +259,7 @@ export default function EmbedPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center py-12 px-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full">
+        <div ref={passwordRef} className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-auto">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
