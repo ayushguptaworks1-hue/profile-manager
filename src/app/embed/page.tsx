@@ -7,7 +7,7 @@ import ProfileCard from '@/components/ProfileCard';
 import FilterPanel from '@/components/FilterPanel';
 
 // Password for accessing the page
-const ACCESS_PASSWORD = 'Gsc@Team#Profile99';
+const ACCESS_PASSWORD = '19901';
 
 export default function EmbedPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -37,12 +37,17 @@ export default function EmbedPage() {
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === ACCESS_PASSWORD) {
+    // Trim input to avoid accidental leading/trailing spaces causing a mismatch
+    const attempt = passwordInput.trim();
+
+    if (attempt === ACCESS_PASSWORD) {
       setIsAuthenticated(true);
       sessionStorage.setItem('profileAccess', 'authenticated');
       setPasswordError(false);
     } else {
       setPasswordError(true);
+      // keep the input so user can adjust; optionally clear to avoid accidental reuse
+      // setPasswordInput('');
     }
   };
 
@@ -277,6 +282,20 @@ export default function EmbedPage() {
               Access Profiles
             </button>
           </form>
+          
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => {
+                sessionStorage.removeItem('profileAccess');
+                setIsAuthenticated(false);
+                setPasswordInput('');
+                setPasswordError(false);
+              }}
+              className="text-sm text-gray-500 hover:text-gray-700 underline"
+            >
+              Reset Session
+            </button>
+          </div>
         </div>
       </div>
     );
