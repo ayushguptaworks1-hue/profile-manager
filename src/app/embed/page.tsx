@@ -7,7 +7,7 @@ import ProfileCard from '@/components/ProfileCard';
 import FilterPanel from '@/components/FilterPanel';
 
 // Password for accessing the page
-const ACCESS_PASSWORD = 'gsc2024';
+const ACCESS_PASSWORD = 'Gsc@Team#Profile99';
 
 export default function EmbedPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
