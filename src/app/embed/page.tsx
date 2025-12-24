@@ -6,6 +6,9 @@ import { supabase } from '@/lib/supabase';
 import ProfileCard from '@/components/ProfileCard';
 import FilterPanel from '@/components/FilterPanel';
 
+// Password for accessing the page
+const ACCESS_PASSWORD = 'gsc2024';
+
 export default function EmbedPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,11 +19,37 @@ export default function EmbedPage() {
     selectedSkills: [] as string[],
     searchQuery: ''
   });
+  
+  // Password protection state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
 
   const ITEMS_PER_PAGE = 8;
 
+  // Check if already authenticated (stored in sessionStorage)
+  useEffect(() => {
+    const savedAuth = sessionStorage.getItem('profileAccess');
+    if (savedAuth === 'authenticated') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === ACCESS_PASSWORD) {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('profileAccess', 'authenticated');
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+    }
+  };
+
   // Read URL parameters from both iframe URL and parent window URL
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const loadFiltersFromURL = () => {
       // First try to get params from current window (iframe) URL
       let params = new URLSearchParams(window.location.search);
@@ -74,10 +103,12 @@ export default function EmbedPage() {
     
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, []);
+  }, [isAuthenticated]);
 
   // Update parent window URL when filters change
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const params = new URLSearchParams();
     if (filters.role) params.set('role', filters.role);
     if (filters.availability) params.set('availability', filters.availability);
@@ -93,12 +124,14 @@ export default function EmbedPage() {
         queryString: queryString
       }, '*');
     }
-  }, [filters]);
+  }, [filters, isAuthenticated]);
 
   // Fetch profiles from Supabase
   useEffect(() => {
-    fetchProfiles();
-  }, []);
+    if (isAuthenticated) {
+      fetchProfiles();
+    }
+  }, [isAuthenticated]);
 
   // Send height to parent window for iframe resize
   useEffect(() => {
@@ -205,6 +238,49 @@ export default function EmbedPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
+
+  // Password protection screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-12 px-4">
+        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">Protected Content</h2>
+            <p className="text-gray-600 mt-2">Enter the password to view team profiles</p>
+          </div>
+          
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="mb-4">
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                placeholder="Enter password"
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center text-lg ${
+                  passwordError ? 'border-red-500' : 'border-gray-300'
+                }`}
+                autoFocus
+              />
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-2 text-center">Incorrect password. Please try again.</p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-semibold text-lg"
+            >
+              Access Profiles
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
