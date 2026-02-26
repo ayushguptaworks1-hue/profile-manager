@@ -152,20 +152,30 @@ export default function EmbedPage() {
   // Hide iframe's own scrollbar - only WordPress parent should scroll
   useEffect(() => {
     document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
+    document.documentElement.style.overflowY = 'hidden';
     document.documentElement.style.height = 'auto';
+    document.documentElement.style.setProperty('overflow', 'hidden', 'important');
     document.body.style.overflow = 'hidden';
+    document.body.style.overflowX = 'hidden';
+    document.body.style.overflowY = 'hidden';
     document.body.style.height = 'auto';
+    document.body.style.setProperty('overflow', 'hidden', 'important');
   }, []);
 
   // Send height to parent window for iframe resize
   useEffect(() => {
     const sendHeight = () => {
-      const height = document.documentElement.scrollHeight;
+      const height = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+        document.documentElement.offsetHeight,
+        document.body.offsetHeight
+      ) + 50; // Add buffer to prevent scrollbar
       if (window.parent && window.parent !== window) {
         // WordPress listens for type: 'iframeHeight'
         window.parent.postMessage({ type: 'iframeHeight', height }, '*');
       }
-      
     };
 
     sendHeight();
