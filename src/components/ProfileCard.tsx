@@ -176,8 +176,8 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${hoursColors[profile.hoursPerWeek]}`}>
             {profile.hoursPerWeek}
           </span>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${transitionColors[profile.transitionTime]}`}>
-            {profile.transitionTime === 'Immediate' ? '🚀 Immediate start' : `⏳ ${profile.transitionTime} transition`}
+          <span className="px-3 py-1 rounded-full text-xs font-semibold border bg-purple-100 text-purple-800 border-purple-300">
+            {profile.transitionTime === 'Immediate' ? 'Immediate start' : `${profile.transitionTime} transition`}
           </span>
         </div>
 
