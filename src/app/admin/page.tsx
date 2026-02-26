@@ -19,7 +19,8 @@ export default function AdminPage() {
     role: '',
     experience: '',
     skills: [],
-    availability: 'In Office',
+    hoursPerWeek: 'Available 40 hrs/week',
+    transitionTime: 'Immediate',
     mediaType: 'image',
     mediaUrl: '',
     thumbnailUrl: '',
@@ -81,7 +82,8 @@ export default function AdminPage() {
         role: item.role,
         experience: item.experience,
         skills: item.skills || [],
-        availability: item.availability as 'Available' | 'Busy' | 'On Leave',
+        hoursPerWeek: item.hours_per_week || 'Available 40 hrs/week',
+        transitionTime: item.transition_time || 'Immediate',
         mediaType: item.media_type as 'video' | 'image',
         mediaUrl: item.media_url,
         thumbnailUrl: item.thumbnail_url,
@@ -135,7 +137,8 @@ export default function AdminPage() {
             role: formData.role,
             experience: formData.experience,
             skills: formData.skills,
-            availability: formData.availability,
+            hours_per_week: formData.hoursPerWeek,
+            transition_time: formData.transitionTime,
             media_type: formData.mediaType,
             media_url: formData.mediaUrl,
             thumbnail_url: formData.thumbnailUrl || null,
@@ -158,7 +161,8 @@ export default function AdminPage() {
               role: formData.role,
               experience: formData.experience,
               skills: formData.skills,
-              availability: formData.availability,
+              hours_per_week: formData.hoursPerWeek,
+              transition_time: formData.transitionTime,
               media_type: formData.mediaType,
               media_url: formData.mediaUrl,
               thumbnail_url: formData.thumbnailUrl || null,
@@ -179,7 +183,8 @@ export default function AdminPage() {
         role: '',
         experience: '',
         skills: [],
-        availability: 'In Office',
+        hoursPerWeek: 'Available 40 hrs/week',
+        transitionTime: 'Immediate',
         mediaType: 'image',
         mediaUrl: '',
         thumbnailUrl: '',
@@ -206,7 +211,8 @@ export default function AdminPage() {
       role: profile.role,
       experience: profile.experience,
       skills: profile.skills,
-      availability: profile.availability,
+      hoursPerWeek: profile.hoursPerWeek,
+      transitionTime: profile.transitionTime,
       mediaType: profile.mediaType,
       mediaUrl: profile.mediaUrl,
       thumbnailUrl: profile.thumbnailUrl || '',
@@ -230,7 +236,8 @@ export default function AdminPage() {
       role: '',
       experience: '',
       skills: [],
-      availability: 'In Office',
+      hoursPerWeek: 'Available 40 hrs/week',
+      transitionTime: 'Immediate',
       mediaType: 'image',
       mediaUrl: '',
       bio: '',
@@ -434,20 +441,41 @@ export default function AdminPage() {
                   />
                 </div>
 
-                {/* Work Location */}
+                {/* Availability (Hours/Week) */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Work Location <span className="text-red-500">*</span>
+                    Availability <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="availability"
-                    value={formData.availability}
+                    name="hoursPerWeek"
+                    value={formData.hoursPerWeek}
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
-                    <option value="In Office">In Office</option>
-                    <option value="Remote">Remote</option>
+                    <option value="Available 20 hrs/week">Available 20 hrs/week</option>
+                    <option value="Available 40 hrs/week">Available 40 hrs/week</option>
+                    <option value="Not Available">Not Available</option>
+                  </select>
+                </div>
+
+                {/* Transition Time */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Transition Time <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="transitionTime"
+                    value={formData.transitionTime}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  >
+                    <option value="Immediate">Immediate</option>
+                    <option value="15 days">15 days</option>
+                    <option value="30 days">30 days</option>
+                    <option value="45 days">45 days</option>
+                    <option value="60 days">60 days</option>
                   </select>
                 </div>
 
@@ -631,7 +659,8 @@ export default function AdminPage() {
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Role</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Experience</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Work Location</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Availability</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Transition</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Skills</th>
                   <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -646,13 +675,22 @@ export default function AdminPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{profile.experience}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        profile.availability === 'In Office' ? 'bg-blue-100 text-blue-800' :
-                        profile.availability === 'Remote' ? 'bg-green-100 text-green-800' :
-                        profile.availability === 'Available' ? 'bg-green-100 text-green-800' :
-                        profile.availability === 'Busy' ? 'bg-yellow-100 text-yellow-800' :
+                        profile.hoursPerWeek === 'Available 40 hrs/week' ? 'bg-green-100 text-green-800' :
+                        profile.hoursPerWeek === 'Available 20 hrs/week' ? 'bg-blue-100 text-blue-800' :
                         'bg-red-100 text-red-800'
                       }`}>
-                        {profile.availability}
+                        {profile.hoursPerWeek}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        profile.transitionTime === 'Immediate' ? 'bg-green-100 text-green-800' :
+                        profile.transitionTime === '15 days' ? 'bg-blue-100 text-blue-800' :
+                        profile.transitionTime === '30 days' ? 'bg-yellow-100 text-yellow-800' :
+                        profile.transitionTime === '45 days' ? 'bg-orange-100 text-orange-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {profile.transitionTime}
                       </span>
                     </td>
                     <td className="px-6 py-4">

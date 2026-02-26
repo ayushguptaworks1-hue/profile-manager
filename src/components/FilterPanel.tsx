@@ -22,15 +22,13 @@ interface FilterPanelProps {
 
 export default function FilterPanel({ roles, skills, initialFilters, onFilterChange, isEmbedded = false }: FilterPanelProps) {
   const [role, setRole] = useState(initialFilters?.role || '');
-  const [availability, setAvailability] = useState(initialFilters?.availability || '');
   const [selectedSkills, setSelectedSkills] = useState<string[]>(initialFilters?.selectedSkills || []);
   const [searchQuery, setSearchQuery] = useState(initialFilters?.searchQuery || '');
 
   // Update local state when initialFilters change (from URL)
   useEffect(() => {
-    if (initialFilters) {
+    if (initialFilters) { 
       setRole(initialFilters.role);
-      setAvailability(initialFilters.availability);
       setSelectedSkills(initialFilters.selectedSkills);
       setSearchQuery(initialFilters.searchQuery);
     }
@@ -41,27 +39,21 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
       ? selectedSkills.filter(s => s !== skill)
       : [...selectedSkills, skill];
     setSelectedSkills(newSkills);
-    onFilterChange({ role, availability, selectedSkills: newSkills, searchQuery });
+    onFilterChange({ role, availability: '', selectedSkills: newSkills, searchQuery });
   };
 
   const handleRoleChange = (newRole: string) => {
     setRole(newRole);
-    onFilterChange({ role: newRole, availability, selectedSkills, searchQuery });
-  };
-
-  const handleAvailabilityChange = (newAvailability: string) => {
-    setAvailability(newAvailability);
-    onFilterChange({ role, availability: newAvailability, selectedSkills, searchQuery });
+    onFilterChange({ role: newRole, availability: '', selectedSkills, searchQuery });
   };
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    onFilterChange({ role, availability, selectedSkills, searchQuery: query });
+    onFilterChange({ role, availability: '', selectedSkills, searchQuery: query });
   };
 
   const handleClearFilters = () => {
     setRole('');
-    setAvailability('');
     setSelectedSkills([]);
     setSearchQuery('');
     onFilterChange({ role: '', availability: '', selectedSkills: [], searchQuery: '' });
@@ -73,7 +65,10 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
     : 'bg-white rounded-lg shadow-md p-6 mb-8';
 
   return (
-    <div className={`${panelBase} sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto`}>
+    <div
+      className={panelBase}
+      style={{ minWidth: '260px', maxWidth: '280px' }}
+    >
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Filters</h2>
         <button
@@ -114,7 +109,7 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
       {/* Skills Filter */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-3">Skills</label>
-        
+
         {/* Selected Skills - Shown at top */}
         {selectedSkills.length > 0 && (
           <div className="mb-3 pb-3 border-b border-gray-200">
@@ -137,9 +132,9 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
             </div>
           </div>
         )}
-        
+
         {/* All Skills */}
-        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
+        <div className="flex flex-wrap gap-2">
           {skills
             .filter(skill => !selectedSkills.includes(skill))
             .map((skill) => (

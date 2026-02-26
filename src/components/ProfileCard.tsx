@@ -75,12 +75,18 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     }
   }, [showContactModal]);
 
-  const availabilityColors = {
-    'In Office': 'bg-blue-100 text-blue-800 border-blue-300',
-    'Remote': 'bg-green-100 text-green-800 border-green-300',
-    'Available': 'bg-green-100 text-green-800 border-green-300',
-    'Busy': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-    'On Leave': 'bg-red-100 text-red-800 border-red-300'
+  const hoursColors = {
+    'Available 20 hrs/week': 'bg-blue-100 text-blue-800 border-blue-300',
+    'Available 40 hrs/week': 'bg-green-100 text-green-800 border-green-300',
+    'Not Available': 'bg-red-100 text-red-800 border-red-300'
+  };
+
+  const transitionColors = {
+    'Immediate': 'bg-green-100 text-green-800 border-green-300',
+    '15 days': 'bg-blue-100 text-blue-800 border-blue-300',
+    '30 days': 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    '45 days': 'bg-orange-100 text-orange-800 border-orange-300',
+    '60 days': 'bg-red-100 text-red-800 border-red-300'
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -152,12 +158,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           />
         )}
         
-        {/* Availability Badge */}
-        <div className="absolute top-3 right-3">
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${availabilityColors[profile.availability]}`}>
-            {profile.availability}
-          </span>
-        </div>
+
       </div>
 
       {/* Content Section */}
@@ -165,11 +166,19 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         <h3 className="text-2xl font-bold text-gray-900 mb-1">{profile.name}</h3>
         <p className="text-lg text-indigo-600 font-semibold mb-2">{profile.role}</p>
         
-        <div className="flex items-center text-gray-600 mb-4">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          <span className="text-sm">{profile.experience} experience</span>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium border border-gray-200 flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            {profile.experience} experience
+          </span>
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${hoursColors[profile.hoursPerWeek]}`}>
+            {profile.hoursPerWeek}
+          </span>
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${transitionColors[profile.transitionTime]}`}>
+            {profile.transitionTime === 'Immediate' ? '🚀 Immediate start' : `⏳ ${profile.transitionTime} transition`}
+          </span>
         </div>
 
         {profile.location && (

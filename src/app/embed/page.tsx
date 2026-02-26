@@ -149,25 +149,36 @@ export default function EmbedPage() {
     }
   }, [isAuthenticated]);
 
+  // Hide iframe's own scrollbar - only WordPress parent should scroll
+  useEffect(() => {
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = 'auto';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = 'auto';
+  }, []);
+
   // Send height to parent window for iframe resize
   useEffect(() => {
     const sendHeight = () => {
-      if (window.parent) {
-        window.parent.postMessage({ height: document.documentElement.scrollHeight }, '*');
+      const height = document.documentElement.scrollHeight;
+      if (window.parent && window.parent !== window) {
+        // WordPress listens for type: 'iframeHeight'
+        window.parent.postMessage({ type: 'iframeHeight', height }, '*');
       }
+      
     };
 
     sendHeight();
     
     // Send height on resize and after content loads
     window.addEventListener('resize', sendHeight);
-    const interval = setInterval(sendHeight, 500);
+    const interval = setInterval(sendHeight, 300);
 
     return () => {
       window.removeEventListener('resize', sendHeight);
       clearInterval(interval);
     };
-  }, [profiles, currentPage]);
+  }, [profiles, currentPage, filters]);
 
   const fetchProfiles = async () => {
     try {
@@ -185,7 +196,8 @@ export default function EmbedPage() {
         role: item.role,
         experience: item.experience,
         skills: item.skills || [],
-        availability: item.availability as 'Available' | 'Busy' | 'On Leave',
+        hoursPerWeek: item.hours_per_week || 'Available 40 hrs/week',
+        transitionTime: item.transition_time || 'Immediate',
         mediaType: item.media_type as 'video' | 'image',
         mediaUrl: item.media_url,
         thumbnailUrl: item.thumbnail_url,
@@ -223,12 +235,7 @@ export default function EmbedPage() {
       // Role filter
       if (filters.role && profile.role !== filters.role) {
         return false;
-      }
-
-      // Availability filter
-      if (filters.availability && profile.availability !== filters.availability) {
-        return false;
-      }
+      }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
       // Skills filter
       if (filters.selectedSkills.length > 0) {
@@ -258,7 +265,7 @@ export default function EmbedPage() {
   // Password protection screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-12 px-4">
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-12 px-4">
         <div ref={passwordRef} className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-auto">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -314,7 +321,7 @@ export default function EmbedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-transparent flex items-center justify-center py-12">
+      <div className="bg-transparent flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
           <p className="mt-4 text-gray-600 text-lg">Loading profiles...</p>

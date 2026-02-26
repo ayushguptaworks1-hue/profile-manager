@@ -73,7 +73,8 @@ function HomeContent() {
         role: item.role,
         experience: item.experience,
         skills: item.skills || [],
-        availability: item.availability as 'Available' | 'Busy' | 'On Leave',
+        hoursPerWeek: item.hours_per_week || 'Available 40 hrs/week',
+        transitionTime: item.transition_time || 'Immediate',
         mediaType: item.media_type as 'video' | 'image',
         mediaUrl: item.media_url,
         thumbnailUrl: item.thumbnail_url,
@@ -110,11 +111,6 @@ function HomeContent() {
 
       // Role filter
       if (filters.role && profile.role !== filters.role) {
-        return false;
-      }
-
-      // Availability filter
-      if (filters.availability && profile.availability !== filters.availability) {
         return false;
       }
 
@@ -216,101 +212,143 @@ function HomeContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Hero Header */}
-      <header className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex justify-between items-center">
-            <div className="text-white">
-              <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">Team Profile</h1>
-              <p className="text-xl text-indigo-100 max-w-2xl">
-                Meet our talented professionals bringing expertise and innovation to every project
-              </p>
-            </div>
-            <Link
-              href="/admin"
-              className="bg-white text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-all duration-200 font-semibold shadow-xl hover:shadow-2xl hover:scale-105"
-            >
-              Admin Panel
-            </Link>
-          </div>
-        </div>
-      </header>
-
+    <div className="h-screen flex">
+      {/* Sidebar */}
+      <aside className="w-[260px] bg-white border-r h-full flex-shrink-0">
+        <FilterPanel
+          roles={roles}
+          skills={skills}
+          initialFilters={filters}
+          onFilterChange={setFilters}
+        />
+      </aside>
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Filters Sidebar */}
-          <aside className="lg:col-span-1">
-            <FilterPanel
-              roles={roles}
-              skills={skills}
-              initialFilters={filters}
-              onFilterChange={setFilters}
-            />
-          </aside>
-
-          {/* Profiles Grid */}
-          <div className="lg:col-span-3">
-            {/* Shareable Filtered Link */}
-            {(filters.role || filters.availability || filters.selectedSkills.length > 0 || filters.searchQuery) && (
-              <div className="mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 border-2 border-indigo-400 rounded-lg p-4 shadow-lg">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex-1 min-w-0">
-                    <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                      </svg>
-                      📋 Copy this link to share filtered results:
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={getFilteredUrl()}
-                      onClick={(e) => e.currentTarget.select()}
-                      className="w-full px-4 py-3 bg-white border-2 border-white rounded-lg text-sm text-gray-900 font-mono shadow-inner"
-                    />
-                  </div>
-                  <button
-                    id="copy-btn"
-                    onClick={copyFilteredLink}
-                    className="px-6 py-3 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 font-bold text-sm whitespace-nowrap mt-7 shadow-lg"
-                  >
-                    📋 Copy Link
-                  </button>
-                </div>
+      <main className="flex-1 overflow-y-auto h-full bg-gradient-to-br from-gray-50 to-gray-100">
+        {/* Hero Header */}
+        <header className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="flex justify-between items-center">
+              <div className="text-white">
+                <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">Team Profile</h1>
+                <p className="text-xl text-indigo-100 max-w-2xl">
+                  Meet our talented professionals bringing expertise and innovation to every project
+                </p>
               </div>
-            )}
-            
-            <div className="mb-6 flex justify-between items-center flex-wrap gap-4">
-              <p className="text-gray-700 text-lg">
-                Showing <span className="font-bold text-indigo-600">{currentProfiles.length}</span> of{' '}
-                <span className="font-bold">{filteredProfiles.length}</span> profiles
-                {filteredProfiles.length !== profiles.length && ` (${profiles.length} total)`}
-              </p>
+              <Link
+                href="/admin"
+                className="bg-white text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-all duration-200 font-semibold shadow-xl hover:shadow-2xl hover:scale-105"
+              >
+                Admin Panel
+              </Link>
             </div>
-            
-            {/* Pagination - Top */}
-            {totalPages > 1 && currentProfiles.length > 0 && (
-              <div className="mb-6 flex justify-center items-center gap-2">
+          </div>
+        </header>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Profiles Grid and rest of content */}
+          {/* Shareable Filtered Link */}
+          {(filters.role || filters.availability || filters.selectedSkills.length > 0 || filters.searchQuery) && (
+            <div className="mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 border-2 border-indigo-400 rounded-lg p-4 shadow-lg">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex-1 min-w-0">
+                  <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    📋 Copy this link to share filtered results:
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={getFilteredUrl()}
+                    onClick={(e) => e.currentTarget.select()}
+                    className="w-full px-4 py-3 bg-white border-2 border-white rounded-lg text-sm text-gray-900 font-mono shadow-inner"
+                  />
+                </div>
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
+                  id="copy-btn"
+                  onClick={copyFilteredLink}
+                  className="px-6 py-3 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition-colors duration-200 font-bold text-sm whitespace-nowrap mt-7 shadow-lg"
+                >
+                  📋 Copy Link
+                </button>
+              </div>
+            </div>
+          )}
+          
+          <div className="mb-6 flex justify-between items-center flex-wrap gap-4">
+            <p className="text-gray-700 text-lg">
+              Showing <span className="font-bold text-indigo-600">{currentProfiles.length}</span> of{' '}
+              <span className="font-bold">{filteredProfiles.length}</span> profiles
+              {filteredProfiles.length !== profiles.length && ` (${profiles.length} total)`}
+            </p>
+          </div>
+          
+          {/* Pagination - Top */}
+          {totalPages > 1 && currentProfiles.length > 0 && (
+            <div className="mb-6 flex justify-center items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+              >
+                Previous
+              </button>
+              
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-2 rounded-lg font-medium text-sm ${
+                      currentPage === page
+                        ? 'bg-indigo-600 text-white'
+                        : 'border border-gray-300 hover:bg-gray-50'
+                    }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
                 >
-                  Previous
+                  Next
                 </button>
-                
-                <div className="flex gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-3 py-2 rounded-lg font-medium text-sm ${
-                        currentPage === page
-                          ? 'bg-indigo-600 text-white'
-                          : 'border border-gray-300 hover:bg-gray-50'
-                      }`}
+              </div>
+            )}
+
+          {currentProfiles.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {currentProfiles.map(profile => (
+                  <ProfileCard key={profile.id} profile={profile} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex justify-center items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  >
+                    Previous
+                  </button>
+                  
+                  <div className="flex gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-4 py-2 rounded-lg font-medium ${
+                          currentPage === page
+                            ? 'bg-indigo-600 text-white'
+                            : 'border border-gray-300 hover:bg-gray-50'
+                        }`}
                       >
                         {page}
                       </button>
@@ -320,78 +358,32 @@ function HomeContent() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                   >
                     Next
                   </button>
                 </div>
               )}
-
-            {currentProfiles.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {currentProfiles.map(profile => (
-                    <ProfileCard key={profile.id} profile={profile} />
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="mt-8 flex justify-center items-center gap-2">
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      disabled={currentPage === 1}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    >
-                      Previous
-                    </button>
-                    
-                    <div className="flex gap-2">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                        <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          className={`px-4 py-2 rounded-lg font-medium ${
-                            currentPage === page
-                              ? 'bg-indigo-600 text-white'
-                              : 'border border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                      disabled={currentPage === totalPages}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-16 bg-white rounded-lg shadow-md">
-                <svg
-                  className="mx-auto h-16 w-16 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                  />
-                </svg>
-                <h3 className="mt-4 text-xl font-semibold text-gray-900">No profiles found</h3>
-                <p className="mt-2 text-gray-600">Try adjusting your filters to see more results.</p>
-              </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-lg shadow-md">
+              <svg
+                className="mx-auto h-16 w-16 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                />
+              </svg>
+              <h3 className="mt-4 text-xl font-semibold text-gray-900">No profiles found</h3>
+              <p className="mt-2 text-gray-600">Try adjusting your filters to see more results.</p>
+            </div>
+          )}
         </div>
       </main>
     </div>
