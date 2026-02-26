@@ -26,7 +26,7 @@ export default function EmbedLayout({
             display: none !important;
             background: transparent !important;
           }
-          #__next {
+          #__next, #embed-root {
             overflow: visible !important;
           }
           /* Completely hide all scrollbars in iframe */
@@ -44,6 +44,11 @@ export default function EmbedLayout({
             width: 0 !important;
             height: 0 !important;
             display: none !important;
+          }
+          /* Prevent any element from creating scrollbars */
+          aside, aside > div, nav, .filter-panel {
+            overflow: visible !important;
+            max-height: none !important;
           }
         `
       }} />

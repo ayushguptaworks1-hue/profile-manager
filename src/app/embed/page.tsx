@@ -336,13 +336,15 @@ export default function EmbedPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
-          <aside className="lg:col-span-1">
-            <FilterPanel
-              roles={roles}
-              skills={skills}
-              onFilterChange={setFilters}
-              isEmbedded
-            />
+          <aside className="lg:col-span-1" style={{ overflow: 'visible' }}>
+            <div style={{ overflow: 'hidden' }}>
+              <FilterPanel
+                roles={roles}
+                skills={skills}
+                onFilterChange={setFilters}
+                isEmbedded
+              />
+            </div>
           </aside>
 
           {/* Profiles Grid */}
