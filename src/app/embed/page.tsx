@@ -167,6 +167,8 @@ export default function EmbedPage() {
   useEffect(() => {
     const sendHeight = () => {
       // Temporarily allow overflow to get true content height
+      const prevHtmlOverflow = document.documentElement.style.overflow;
+      const prevBodyOverflow = document.body.style.overflow;
       document.documentElement.style.overflow = 'visible';
       document.body.style.overflow = 'visible';
       
@@ -175,14 +177,13 @@ export default function EmbedPage() {
         document.body.scrollHeight,
         document.documentElement.offsetHeight,
         document.body.offsetHeight
-      ) + 100; // Add buffer to prevent cutting
+      );
       
       // Re-hide overflow
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
       
       if (window.parent && window.parent !== window) {
-        // WordPress listens for type: 'iframeHeight'
         window.parent.postMessage({ type: 'iframeHeight', height }, '*');
       }
     };
