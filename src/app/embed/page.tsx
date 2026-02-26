@@ -39,10 +39,14 @@ export default function EmbedPage() {
   // Auto-scroll to the password card when not authenticated (useful for embedded view)
   useEffect(() => {
     if (!isAuthenticated && passwordRef.current) {
-      // Give the layout a tick to ensure it's rendered, then scroll
+      // Tell the parent WordPress page to scroll the iframe into view
       setTimeout(() => {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'scrollToIframe' }, '*');
+        }
+        // Also try native scrollIntoView as fallback
         passwordRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 50);
+      }, 300);
     }
   }, [isAuthenticated]);
 
@@ -285,7 +289,7 @@ export default function EmbedPage() {
   // Password protection screen
   if (!isAuthenticated) {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4" style={{ minHeight: '600px', paddingTop: '120px', paddingBottom: '120px' }}>
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4" style={{ minHeight: '500px', paddingTop: '40px', paddingBottom: '40px' }}>
         <div ref={passwordRef} className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-auto">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
