@@ -134,18 +134,27 @@ export default function FilterPanel({ roles, skills, initialFilters, onFilterCha
         )}
 
         {/* All Skills */}
-        <div className="flex flex-wrap gap-2">
-          {skills
-            .filter(skill => !selectedSkills.includes(skill))
-            .map((skill) => (
-              <button
-                key={skill}
-                onClick={() => handleSkillToggle(skill)}
-                className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
-              >
-                {skill}
-              </button>
-            ))}
+        <div
+          className="skills-scroll-area pr-2"
+          style={{
+            maxHeight: '256px',
+            overflowY: 'scroll',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          <div className="flex flex-wrap gap-2">
+            {skills
+              .filter(skill => !selectedSkills.includes(skill))
+              .map((skill) => (
+                <button
+                  key={skill}
+                  onClick={() => handleSkillToggle(skill)}
+                  className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
+                >
+                  {skill}
+                </button>
+              ))}
+          </div>
         </div>
       </div>
     </div>
