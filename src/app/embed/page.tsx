@@ -166,12 +166,21 @@ export default function EmbedPage() {
   // Send height to parent window for iframe resize
   useEffect(() => {
     const sendHeight = () => {
+      // Temporarily allow overflow to get true content height
+      document.documentElement.style.overflow = 'visible';
+      document.body.style.overflow = 'visible';
+      
       const height = Math.max(
         document.documentElement.scrollHeight,
         document.body.scrollHeight,
         document.documentElement.offsetHeight,
         document.body.offsetHeight
-      ) + 50; // Add buffer to prevent scrollbar
+      ) + 100; // Add buffer to prevent cutting
+      
+      // Re-hide overflow
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      
       if (window.parent && window.parent !== window) {
         // WordPress listens for type: 'iframeHeight'
         window.parent.postMessage({ type: 'iframeHeight', height }, '*');
