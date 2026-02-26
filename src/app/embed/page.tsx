@@ -285,7 +285,7 @@ export default function EmbedPage() {
   // Password protection screen
   if (!isAuthenticated) {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4" style={{ minHeight: '600px', paddingTop: '40px', paddingBottom: '40px' }}>
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
         <div ref={passwordRef} className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-auto">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
